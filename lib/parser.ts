@@ -397,13 +397,14 @@ export class Parser {
   }
 
   static detectLayer(path: string): string {
-    const l = path.toLowerCase();
-    if (l.includes('/test') || l.match(/test_\w+\.py$/) || l.includes('__tests__')) return 'test';
-    if (l.includes('/ui/') || l.includes('/views/') || l.includes('/pages/') || l.includes('/component')) return 'ui';
-    if (l.includes('/service') || l.includes('/api/') || l.includes('/controller') || l.includes('/endpoint')) return 'services';
-    if (l.includes('/data') || l.includes('/model') || l.includes('/store') || l.includes('/schema')) return 'data';
-    if (l.includes('/config') || l.includes('/settings')) return 'config';
-    if (l.includes('/util') || l.includes('/helper') || l.includes('/lib')) return 'utils';
-    return 'utils';
+    const lower = path.toLowerCase();
+    if (lower.includes('/ui/') || lower.includes('/pages/') || lower.includes('/app/')) return 'ui';
+    if (lower.includes('/components/')) return 'component';
+    if (lower.includes('/services/') || lower.includes('/api/')) return 'services';
+    if (lower.includes('/lib/') || lower.includes('/utils/')) return 'utils';
+    if (lower.includes('/models/') || lower.includes('/data/') || lower.includes('/db/')) return 'data';
+    if (lower.includes('/config/')) return 'config';
+    if (lower.includes('/test/') || lower.includes('.test.') || lower.includes('.spec.')) return 'test';
+    return 'other';
   }
 }
