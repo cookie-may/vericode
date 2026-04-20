@@ -14,6 +14,7 @@ export class GitHubClient {
 
   constructor(token?: string) {
     this.token = token || '';
+    console.log('GitHubClient initialized with token:', token ? 'present' : 'none');
   }
 
   setToken(token: string) {
@@ -30,6 +31,9 @@ export class GitHubClient {
       Object.entries(headers).filter(([, v]) => v !== '')
     );
 
+    console.log('Making GitHub API request to:', url);
+    console.log('Using authorization:', this.token ? 'yes' : 'no');
+
     const response = await fetch(url, { ...options, headers: cleanHeaders });
 
     if (!response.ok) {
@@ -39,7 +43,7 @@ export class GitHubClient {
       if (response.status === 401) {
         throw new Error('Invalid token');
       }
-      throw new Error(`GitHub API error: ${response.statusText}`);
+      throw new Error(`GitHub API error: ${response.status} ${response.statusText || 'Unknown error'}`);
     }
 
     return response;
@@ -69,17 +73,47 @@ export class GitHubClient {
     repo: string,
     path: string,
     branch: string = 'main'
-  ): Promise<string> {
-    const response = await this.fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`
-    );
-    const data = await response.json();
+  ): Promise<string | null> {
+    try {
+      const response = await this.fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`
+      );
+      const data = await response.json();
 
-    if (data.content) {
-      return Buffer.from(data.content, 'base64').toString('utf-8');
+      // Check if response is an array (directory listing)
+      if (Array.isArray(data)) {
+        return null;
+      }
+
+      // Handle empty files - return empty string
+      if (data.size === 0) {
+        return '';
+      }
+
+      // Handle symlinks or special files
+      if (data.type === 'symlink' || data.target) {
+        return null;
+      }
+
+      // Handle large files (>1MB) - GitHub API doesn't include content
+      if (data.size && data.size > 1000000) {
+        return null;
+      }
+
+      // Handle API errors
+      if (data.message) {
+        return null;
+      }
+
+      // Try to get content
+      if (data.content) {
+        return Buffer.from(data.content, 'base64').toString('utf-8');
+      }
+
+      return null;
+    } catch (err) {
+      return null;
     }
-
-    throw new Error('Could not decode file content');
   }
 
   async analyzeRepository(
@@ -113,6 +147,10 @@ export class GitHubClient {
         // Limit to 500 files for performance
         try {
           const content = await this.getFileContent(owner, repo, file.path, branch);
+
+          // Skip files that couldn't be fetched
+          if (content === null) continue;
+
           const parts = file.path.split('/');
           const folder = parts.slice(0, -1).join('/');
 
@@ -125,7 +163,7 @@ export class GitHubClient {
 
           files.push({
             path: file.path,
-            name: file.name,
+            name: name,
             folder: folder || '/',
             content,
             functions,
@@ -134,10 +172,11 @@ export class GitHubClient {
             churn: 0,
             isCode: true,
             complexity,
-            language: this.detectLanguage(file.name),
+            language: this.detectLanguage(name),
           });
         } catch (err) {
           console.error(`Failed to fetch ${file.path}:`, err);
+          continue;
         }
       }
     } catch (err) {
