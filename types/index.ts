@@ -109,7 +109,7 @@ export interface BlastRadius {
 
 export interface HealthScore {
   score: number;
-  grade: 'A' | 'B' | 'C' | 'D' | 'F';
+  grade: 'A+' | 'A' | 'A-' | 'B+' | 'B' | 'B-' | 'C+' | 'C' | 'C-' | 'D' | 'F';
 }
 
 export interface PRRisk {

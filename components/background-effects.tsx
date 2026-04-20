@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-// Architectural symbols representing code structure
-const CODE_SYMBOLS = ['{', '}', '[', ']', '(', ')', '<', '>', '/', '\\', '|', '-', '+', '=', '*', '&', '%', '@', '#'];
+// Robotics symbols representing mechanical components
+const ROBOTICS_SYMBOLS = ['⚙️', '🤖', '🔧', '⚡', '🔌', '⟲', '⟳', '⟱', '⟰', '⟶', '⟵', '⟷', '⟺', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼'];
 
 export default function BackgroundEffects() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,7 +21,7 @@ export default function BackgroundEffects() {
     let mouse = { x: width / 2, y: height / 2 };
     let time = 0;
 
-    // Professional particle count for architectural visualization
+    // Professional particle count for robotics visualization
     const particleCount = 120;
     const particles: Array<{
       x: number; y: number;
@@ -39,7 +39,7 @@ export default function BackgroundEffects() {
 
     for (let i = 0; i < particleCount; i++) {
       const isConnection = Math.random() > 0.7; // 30% are connection nodes
-      const symbol = CODE_SYMBOLS[Math.floor(Math.random() * CODE_SYMBOLS.length)];
+      const symbol = ROBOTICS_SYMBOLS[Math.floor(Math.random() * ROBOTICS_SYMBOLS.length)];
 
       particles.push({
         x: Math.random() * width,
@@ -86,7 +86,7 @@ export default function BackgroundEffects() {
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Architectural connection logic
+          // Robotics connection logic
           if (dist < 120 && (p.isConnection || p2.isConnection)) {
             const connectionOpacity = (1 - dist / 120) * 0.15 * (p.connectionStrength + p2.connectionStrength) / 2;
             ctx.strokeStyle = `rgba(241, 119, 32, ${connectionOpacity})`;

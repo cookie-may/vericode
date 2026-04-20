@@ -298,11 +298,10 @@ export class Analyzer {
       ui: 0,
       component: 0,
       page: 0,
-      service: 1,
+      services: 1,
       api: 1,
       data: 2,
       model: 2,
-      util: 3,
       utils: 3,
       config: 4,
       test: 5,
@@ -403,11 +402,37 @@ export class Analyzer {
 
     score = Math.max(0, Math.min(100, score));
 
-    let grade: 'A' | 'B' | 'C' | 'D' | 'F' = 'A';
-    if (score < 60) grade = 'F';
-    else if (score < 70) grade = 'D';
-    else if (score < 80) grade = 'C';
-    else if (score < 90) grade = 'B';
+    // Determine grade based on calculated score
+    let grade: 'A+' | 'A' | 'A-' | 'B+' | 'B' | 'B-' | 'C+' | 'C' | 'C-' | 'D' | 'F';
+    if (score >= 95) grade = 'A+';
+    else if (score >= 90) grade = 'A';
+    else if (score >= 85) grade = 'A-';
+    else if (score >= 80) grade = 'B+';
+    else if (score >= 75) grade = 'B';
+    else if (score >= 70) grade = 'B-';
+    else if (score >= 65) grade = 'C+';
+    else if (score >= 60) grade = 'C';
+    else if (score >= 55) grade = 'C-';
+    else if (score >= 45) grade = 'D';
+    else grade = 'F';
+
+    // Randomize score within the grade's range
+    const gradeRanges = {
+      'A+': [95, 100],
+      'A': [90, 94],
+      'A-': [85, 89],
+      'B+': [80, 84],
+      'B': [75, 79],
+      'B-': [70, 74],
+      'C+': [65, 69],
+      'C': [60, 64],
+      'C-': [55, 59],
+      'D': [45, 54],
+      'F': [0, 44]
+    };
+
+    const [min, max] = gradeRanges[grade];
+    score = Math.floor(Math.random() * (max - min + 1)) + min;
 
     return { score, grade };
   }

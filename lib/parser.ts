@@ -399,16 +399,17 @@ export class Parser {
   // Tambahkan/Update fungsi ini di lib/parser.ts
   static detectLayer(path: string): string {
     const lower = path.toLowerCase();
-    // Support modern Next.js structures and standard patterns
-    if (lower.match(/(^|\/)(app|pages|ui|views|templates|src)\//) || lower.match(/^app\//) || lower.match(/^src\//)) return 'ui';
+    // Specific folder patterns checked before broad src/ catch-all
     if (lower.match(/(^|\/)(components|widgets)\//)) return 'component';
     if (lower.match(/(^|\/)(services|api|controllers|routes)\//)) return 'services';
     if (lower.match(/(^|\/)(lib|utils|helpers|core|hooks)\//)) return 'utils';
     if (lower.match(/(^|\/)(models|data|db|store|types|interfaces)\//)) return 'data';
     if (lower.match(/(^|\/)(config|env|constants)\//)) return 'config';
     if (lower.match(/(^|\/)(test|__tests__|tests)\//) || lower.includes('.test.') || lower.includes('.spec.')) return 'test';
-    // Catch root level files that might be entry points
+    // UI layer: explicit app/pages folders or root-level files
+    if (lower.match(/(^|\/)(app|pages|ui|views|templates)\//)) return 'ui';
+    if (lower.match(/^src\//) && lower.endsWith('.tsx')) return 'ui';
     if (!lower.includes('/') && (lower.endsWith('.tsx') || lower.endsWith('.ts') || lower.endsWith('.js'))) return 'ui';
-    return 'other'; // Fallback so it doesn't stay undefined
+    return 'other';
   }
 }

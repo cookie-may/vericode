@@ -24,7 +24,15 @@ export class CodeAnalyzer {
     const github = new GitHubClient(token);
     const { owner, repo } = github.parseRepoUrl(repoUrl);
 
-    this.files = await github.analyzeRepository(owner, repo, 'main', excludePatterns);
+    try {
+      this.files = await github.analyzeRepository(owner, repo, 'main', excludePatterns);
+    } catch (err: any) {
+      if (err?.message?.includes('404') || err?.message?.includes('not found')) {
+        this.files = await github.analyzeRepository(owner, repo, 'master', excludePatterns);
+      } else {
+        throw err;
+      }
+    }
     return this.performAnalysis();
   }
 

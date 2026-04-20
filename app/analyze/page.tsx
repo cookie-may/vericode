@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { CodeAnalyzer } from '@/lib/orchestrator';
 import { AnalysisResult, CodeFile } from '@/types';
-import Graph from '@/components/graph';
+import Graph, { LAYER_COLORS } from '@/components/graph';
 import FileTree from '@/components/file-tree';
 import { 
   Zap, Copy, Download, Settings, X, Search, 
@@ -44,15 +44,13 @@ export default function AnalyzePage() {
     return () => clearInterval(interval);
   }, [loading, loadingStep]);
 
-  // FIX: Fungsi seleksi file yang menjamin data lengkap terambil dari result
   const handleSelectFile = useCallback((nodeOrFile: any) => {
     if (!result) return;
-    const path = nodeOrFile.path || nodeOrFile.id;
+    const path = nodeOrFile.path ?? nodeOrFile.id;
+    if (!path) return;
     const fullFileData = result.files.find(f => f.path === path);
     if (fullFileData) {
       setSelectedFile(fullFileData);
-      // Default ke tab Specs saat file baru dipilih
-      setRightPanel('details');
     }
   }, [result]);
 
@@ -217,16 +215,25 @@ export default function AnalyzePage() {
           )}
 
           <div className="h-12 border-b border-white/5 flex items-center px-6 justify-between bg-[#0D0D10]/50 backdrop-blur-sm z-10">
-            <div className="flex bg-black/60 rounded-lg p-0.5 border border-white/5">
-                {(['layer', 'folder'] as const).map(mode => (
-                    <button 
-                        key={mode}
-                        onClick={() => setColorMode(mode)}
-                        className={`px-4 py-1 text-[9px] font-black rounded uppercase tracking-widest transition-all ${colorMode === mode ? 'bg-brand-orange text-black' : 'text-slate-500 hover:text-slate-200'}`}
-                    >
-                        {mode}
-                    </button>
-                ))}
+            <div className="flex items-center gap-4">
+              <div className="flex bg-black/60 rounded-lg p-0.5 border border-white/5">
+                  {(['layer', 'folder'] as const).map(mode => (
+                      <button
+                          key={mode}
+                          onClick={() => setColorMode(mode)}
+                          className={`px-4 py-1 text-[9px] font-black rounded uppercase tracking-widest transition-all ${colorMode === mode ? 'bg-brand-orange text-black' : 'text-slate-500 hover:text-slate-200'}`}
+                      >
+                          {mode}
+                      </button>
+                  ))}
+              </div>
+              {result && (
+                <div className="flex items-center gap-3 text-[9px] font-bold text-slate-600 uppercase tracking-widest">
+                  <span>{result.files.length} nodes</span>
+                  <span className="text-white/10">·</span>
+                  <span>{result.connections.length} edges</span>
+                </div>
+              )}
             </div>
             {selectedFile && (
                 <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-4">
@@ -262,77 +269,192 @@ export default function AnalyzePage() {
             <TabButton active={rightPanel === 'security'} onClick={() => setRightPanel('security')} icon={<Shield className="w-3.5 h-3.5" />} label="Security" />
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5 scrollbar-hide">
+          <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
             {selectedFile ? (
-                <div className="space-y-6 animate-in fade-in duration-300">
+                <div className="space-y-4 animate-in fade-in duration-300">
+
+                    {/* ── FILE HEADER (always visible) ── */}
+                    <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor: LAYER_COLORS[selectedFile.layer] ?? '#64748b',
+                            boxShadow: `0 0 6px ${LAYER_COLORS[selectedFile.layer] ?? '#64748b'}88`,
+                          }}
+                        />
+                        <span className="text-[11px] font-mono font-bold text-white truncate">{selectedFile.name}</span>
+                      </div>
+                      <p className="text-[9px] font-mono text-slate-600 truncate">{selectedFile.path}</p>
+                    </div>
+
                     {rightPanel === 'details' && (
-                        <div className="space-y-6">
-                            <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl space-y-3">
-                                <div className="text-[10px] font-black text-brand-orange uppercase tracking-[0.2em] mb-2">Metrics</div>
-                                <MetricRow label="Lines" value={selectedFile.lines.toString()} />
-                                <MetricRow label="Complexity" value={selectedFile.complexity?.level?.toUpperCase() || 'LOW'} />
-                                <MetricRow label="Layer" value={selectedFile.layer?.toUpperCase() || 'GENERAL'} />
+                        <div className="space-y-4">
+                            {/* Metrics grid */}
+                            <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl space-y-0">
+                                <div className="text-[10px] font-black text-brand-orange uppercase tracking-[0.2em] mb-3">Metrics</div>
+                                <MetricRow label="Lines" value={selectedFile.lines.toLocaleString()} />
+                                <MetricRow label="Language" value={selectedFile.language || 'Unknown'} />
+                                <MetricRow
+                                  label="Complexity"
+                                  value={selectedFile.complexity?.level?.toUpperCase() || 'LOW'}
+                                  accent={
+                                    selectedFile.complexity?.level === 'critical' ? '#f43f5e' :
+                                    selectedFile.complexity?.level === 'high'     ? '#fb923c' :
+                                    selectedFile.complexity?.level === 'medium'   ? '#fbbf24' : '#4ade80'
+                                  }
+                                />
+                                <MetricRow label="Complexity Score" value={selectedFile.complexity?.score?.toString() || '0'} />
+                                <div className="flex justify-between items-center py-2 border-b border-white/[0.03]">
+                                  <span className="text-[9px] font-bold text-slate-500 uppercase">Layer</span>
+                                  <span
+                                    className="text-[9px] font-black uppercase px-2 py-0.5 rounded"
+                                    style={{
+                                      color: LAYER_COLORS[selectedFile.layer] ?? '#64748b',
+                                      backgroundColor: `${LAYER_COLORS[selectedFile.layer] ?? '#64748b'}18`,
+                                    }}
+                                  >
+                                    {selectedFile.layer || 'other'}
+                                  </span>
+                                </div>
+                                <MetricRow label="Functions" value={selectedFile.functions.length.toString()} />
                             </div>
+
+                            {/* Exported Symbols */}
                             <div className="space-y-2">
                                 <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
                                     <Layers className="w-3 h-3 text-brand-orange" />
                                     Exported Symbols
                                 </div>
-                                <div className="grid gap-1">
+                                {selectedFile.functions.length === 0 ? (
+                                  <div className="text-[10px] text-slate-700 font-mono px-3 py-2 bg-black/20 rounded border border-white/5">
+                                    No symbols detected
+                                  </div>
+                                ) : (
+                                  <div className="grid gap-1">
                                     {selectedFile.functions.slice(0, 15).map((fn, i) => (
-                                        <div key={i} className="px-3 py-1.5 bg-black/40 border border-white/5 rounded text-[10px] font-mono text-slate-400">
-                                            {fn.name}()
+                                        <div key={i} className="px-3 py-1.5 bg-black/40 border border-white/5 rounded text-[10px] font-mono text-slate-400 flex items-center gap-2">
+                                            <span className="text-slate-700 text-[8px]">{fn.type}</span>
+                                            <span>{fn.name}()</span>
+                                            {fn.isExported && <span className="ml-auto text-[8px] text-brand-orange/60 font-bold">export</span>}
                                         </div>
                                     ))}
-                                    {selectedFile.functions.length > 15 && <div className="text-[9px] text-slate-600 font-bold px-2">+{selectedFile.functions.length - 15} more</div>}
-                                </div>
+                                    {selectedFile.functions.length > 15 && (
+                                      <div className="text-[9px] text-slate-600 font-bold px-2">
+                                        +{selectedFile.functions.length - 15} more
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
                             </div>
                         </div>
                     )}
 
                     {rightPanel === 'blast' && (
-                        <div className="space-y-6">
-                            <div className="p-6 bg-brand-orange/5 border border-brand-orange/20 rounded-2xl text-center">
-                                <div className="text-[10px] font-black text-brand-orange uppercase tracking-widest mb-4">Blast Radius</div>
-                                <div className="text-6xl font-black text-white mb-1">{blastRadius.percentage}%</div>
-                                <div className="text-[9px] font-bold text-slate-500 uppercase">Impact Intensity</div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
-                                    <GitPullRequest className="w-3 h-3 text-brand-orange" />
-                                    Downstream Nodes ({blastRadius.count})
-                                </div>
-                                <div className="space-y-1">
-                                    {blastRadius.files.slice(0, 10).map((f, i) => (
-                                        <div key={i} className="text-[10px] font-mono text-slate-600 pl-3 border-l border-white/10">{f.split('/').pop()}</div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {rightPanel === 'security' && (
                         <div className="space-y-4">
-                            {result?.securityIssues.filter(si => si.file === selectedFile.path).length ? (
-                                result.securityIssues.filter(si => si.file === selectedFile.path).map((issue, i) => (
-                                    <div key={i} className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                                        <div className="text-[10px] font-black text-red-400 uppercase mb-1">[{issue.severity}] {issue.title}</div>
-                                        <p className="text-[11px] text-slate-400 leading-relaxed">{issue.desc}</p>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="py-20 text-center opacity-30">
-                                    <Shield className="w-12 h-12 mx-auto mb-4" />
-                                    <p className="text-[10px] font-black uppercase tracking-widest">No local threats</p>
+                            {/* Impact score */}
+                            <div className="p-5 bg-brand-orange/5 border border-brand-orange/20 rounded-2xl text-center">
+                                <div className="text-[10px] font-black text-brand-orange uppercase tracking-widest mb-3">Blast Radius</div>
+                                <div className="text-5xl font-black text-white mb-1">{blastRadius.percentage}%</div>
+                                <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+                                  of codebase affected
                                 </div>
+                            </div>
+
+                            {/* Stats row */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-center">
+                                <div className="text-2xl font-black text-white">{blastRadius.count}</div>
+                                <div className="text-[8px] text-slate-600 uppercase tracking-widest font-bold mt-0.5">Downstream</div>
+                              </div>
+                              <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-center">
+                                <div className="text-2xl font-black text-white">
+                                  {result!.connections.filter(c => c.source === selectedFile.path).length}
+                                </div>
+                                <div className="text-[8px] text-slate-600 uppercase tracking-widest font-bold mt-0.5">Dependencies</div>
+                              </div>
+                            </div>
+
+                            {/* Affected files list */}
+                            {blastRadius.files.length > 0 && (
+                              <div className="space-y-1.5">
+                                  <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
+                                      <GitPullRequest className="w-3 h-3 text-brand-orange" />
+                                      Affected Files
+                                  </div>
+                                  <div className="space-y-1">
+                                      {blastRadius.files.slice(0, 12).map((f, i) => (
+                                          <div key={i} className="flex items-center gap-2 px-2 py-1 bg-black/20 rounded border border-white/[0.04]">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-brand-orange/40 flex-shrink-0" />
+                                            <span className="text-[10px] font-mono text-slate-500 truncate">{f.split('/').pop()}</span>
+                                          </div>
+                                      ))}
+                                      {blastRadius.files.length > 12 && (
+                                        <div className="text-[9px] text-slate-700 font-bold px-2">
+                                          +{blastRadius.files.length - 12} more files
+                                        </div>
+                                      )}
+                                  </div>
+                              </div>
+                            )}
+
+                            {blastRadius.count === 0 && (
+                              <div className="py-8 text-center opacity-40">
+                                <Radio className="w-8 h-8 mx-auto mb-3" />
+                                <p className="text-[10px] font-black uppercase tracking-widest">No dependents found</p>
+                                <p className="text-[9px] text-slate-600 mt-1">This file is a leaf node</p>
+                              </div>
                             )}
                         </div>
                     )}
+
+                    {rightPanel === 'security' && (() => {
+                        const issues = result!.securityIssues.filter(si => si.path === selectedFile.path);
+                        return (
+                          <div className="space-y-3">
+                            {issues.length > 0 ? (
+                              <>
+                                <div className="text-[10px] font-black text-red-400 uppercase tracking-widest flex items-center gap-2">
+                                  <AlertTriangle className="w-3 h-3" />
+                                  {issues.length} {issues.length === 1 ? 'Issue' : 'Issues'} Found
+                                </div>
+                                {issues.map((issue, i) => (
+                                  <div key={i} className={`p-4 rounded-xl border ${
+                                    issue.severity === 'high'
+                                      ? 'bg-red-500/5 border-red-500/20'
+                                      : issue.severity === 'medium'
+                                      ? 'bg-orange-500/5 border-orange-500/20'
+                                      : 'bg-yellow-500/5 border-yellow-500/20'
+                                  }`}>
+                                    <div className={`text-[10px] font-black uppercase mb-1.5 flex items-center gap-2 ${
+                                      issue.severity === 'high' ? 'text-red-400' :
+                                      issue.severity === 'medium' ? 'text-orange-400' : 'text-yellow-400'
+                                    }`}>
+                                      <span className="px-1.5 py-0.5 rounded text-[8px] bg-current/10">{issue.severity}</span>
+                                      {issue.title}
+                                    </div>
+                                    <p className="text-[11px] text-slate-400 leading-relaxed">{issue.desc}</p>
+                                    {issue.line && (
+                                      <p className="text-[9px] text-slate-600 font-mono mt-1.5">Line {issue.line}</p>
+                                    )}
+                                  </div>
+                                ))}
+                              </>
+                            ) : (
+                              <div className="py-16 text-center opacity-30">
+                                  <Shield className="w-10 h-10 mx-auto mb-3" />
+                                  <p className="text-[10px] font-black uppercase tracking-widest">No threats detected</p>
+                                  <p className="text-[9px] text-slate-600 mt-1">This file looks clean</p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                    })()}
                 </div>
             ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-20 py-20">
                   <Activity className="w-12 h-12 mb-4 animate-pulse" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">Select Node for <br/> Intelligence Stream</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">Select a node<br/>to inspect</p>
                 </div>
             )}
           </div>
@@ -358,11 +480,16 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
   );
 }
 
-function MetricRow({ label, value }: { label: string, value: string }) {
+function MetricRow({ label, value, accent }: { label: string; value: string; accent?: string }) {
     return (
         <div className="flex justify-between items-center py-2 border-b border-white/[0.03]">
             <span className="text-[9px] font-bold text-slate-500 uppercase">{label}</span>
-            <span className="text-[10px] font-black text-white uppercase">{value}</span>
+            <span
+              className="text-[10px] font-black uppercase"
+              style={{ color: accent ?? '#ffffff' }}
+            >
+              {value}
+            </span>
         </div>
     );
 }
