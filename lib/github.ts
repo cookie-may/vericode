@@ -96,21 +96,27 @@ export class GitHubClient {
 
       // Filter files
       const codeFiles = tree.filter(
-        file =>
-          file.type === 'blob' &&
-          Parser.isCodeFile(file.name) &&
-          !this.shouldExclude(file.path, excludePatterns)
+        file => {
+          const name = file.path?.split('/').pop() || '';
+          return (
+            file.type === 'blob' &&
+            Parser.isCodeFile(name) &&
+            !this.shouldExclude(file.path, excludePatterns)
+          );
+        }
       );
 
       // Fetch content for each file
       for (const file of codeFiles.slice(0, 500)) {
+        const name = file.path?.split('/').pop() || file.path || '';
+        if (!name) continue;
         // Limit to 500 files for performance
         try {
           const content = await this.getFileContent(owner, repo, file.path, branch);
           const parts = file.path.split('/');
           const folder = parts.slice(0, -1).join('/');
 
-          const functions = Parser.extractFunctions(content, file.name);
+          const functions = Parser.extractFunctions(content, name);
           const complexityResult = this.calcComplexity(content);
           const complexity = {
             score: complexityResult.score,
