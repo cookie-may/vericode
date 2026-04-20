@@ -16,6 +16,26 @@ export default function AnalyzePage() {
   const [colorMode, setColorMode] = useState<'layer' | 'folder'>('layer');
   const [rightPanel, setRightPanel] = useState<'details' | 'issues' | 'patterns' | 'security'>('details');
 
+  // Build graph data - must be called unconditionally
+  const graphData = useMemo(() => {
+    if (!result) return { nodes: [], links: [] };
+    return {
+      nodes: result.files.map(f => ({
+        id: f.path,
+        name: f.name,
+        folder: f.folder,
+        layer: f.layer,
+        size: Math.max(5, Math.sqrt(f.functions.length) * 3),
+      })),
+      links: result.connections.map(c => ({
+        source: c.source,
+        target: c.target,
+        value: c.count,
+        label: c.fn,
+      })),
+    };
+  }, [result]);
+
   const handleAnalyze = useCallback(async () => {
     if (!repoUrl.trim()) {
       setError('Please enter a repository URL');
@@ -256,24 +276,7 @@ export default function AnalyzePage() {
           {/* Graph Canvas */}
           <div className="flex-1 overflow-hidden relative">
             <Graph
-              data={useMemo(
-                () => ({
-                  nodes: result.files.map(f => ({
-                    id: f.path,
-                    name: f.name,
-                    folder: f.folder,
-                    layer: f.layer,
-                    size: Math.max(5, Math.sqrt(f.functions.length) * 3),
-                  })),
-                  links: result.connections.map(c => ({
-                    source: c.source,
-                    target: c.target,
-                    value: c.count,
-                    label: c.fn,
-                  })),
-                }),
-                [result]
-              )}
+              data={graphData}
               onNodeClick={handleNodeClick}
               colorMode={colorMode}
             />
