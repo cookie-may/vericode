@@ -36,13 +36,17 @@ export default function Landing() {
             Visualize architecture, spot security issues, detect patterns, and measure code quality—all in seconds.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <Button size="lg" className="bg-brand-orange text-brand-navy hover:bg-brand-orange/90">
-              Analyze Your Code
-            </Button>
-            <Button size="lg" variant="outline">
-              <Code className="mr-2 h-4 w-4" />
-              GitHub
-            </Button>
+            <a href="/analyze">
+              <Button size="lg" className="bg-brand-orange text-brand-navy hover:bg-brand-orange/90">
+                Analyze Your Code
+              </Button>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline">
+                <Code className="mr-2 h-4 w-4" />
+                GitHub
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -110,9 +114,11 @@ export default function Landing() {
           <p className="mt-4 text-muted-foreground">
             Paste a GitHub URL or upload your local files. No installation needed.
           </p>
-          <Button size="lg" className="mt-8 bg-brand-orange text-brand-navy hover:bg-brand-orange/90">
-            Get Started
-          </Button>
+          <a href="/analyze" className="mt-8 inline-block">
+            <Button size="lg" className="bg-brand-orange text-brand-navy hover:bg-brand-orange/90">
+              Get Started
+            </Button>
+          </a>
         </div>
       </section>
 
