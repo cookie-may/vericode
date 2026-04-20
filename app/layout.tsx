@@ -13,8 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vericode - Codebase Architecture Analysis",
-  description: "Analyze your codebase architecture in seconds. Visualize dependencies, security issues, and code quality.",
+  title: "Vericode - Code Architecture Intelligence",
+  description: "Analyze codebase architecture instantly. Visualize dependencies, assess blast radius, and get actionable refactoring insights.",
+  icons: {
+    icon: "/logo.jpeg",
+    shortcut: "/logo.jpeg",
+    apple: "/logo.jpeg",
+  },
 };
 
 export default function RootLayout({
@@ -27,7 +32,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#0A0A0C] text-slate-200">{children}</body>
     </html>
   );
 }

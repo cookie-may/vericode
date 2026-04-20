@@ -17,7 +17,7 @@ const LAYER_COLORS: Record<string, string> = {
   utils: '#4ade80',
   config: '#fb7185',
   test: '#fbbf24',
-  other: '#64748b', // Tambahkan 'other' agar tidak undefined
+  other: '#64748b', // Warna abu-abu untuk file umum
 };
 
 export default function Graph({ data, onNodeClick, colorMode = 'layer' }: GraphProps) {

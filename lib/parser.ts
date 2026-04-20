@@ -396,15 +396,19 @@ export class Parser {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
+  // Tambahkan/Update fungsi ini di lib/parser.ts
   static detectLayer(path: string): string {
     const lower = path.toLowerCase();
-    if (lower.includes('/ui/') || lower.includes('/pages/') || lower.includes('/app/')) return 'ui';
-    if (lower.includes('/components/')) return 'component';
-    if (lower.includes('/services/') || lower.includes('/api/')) return 'services';
-    if (lower.includes('/lib/') || lower.includes('/utils/')) return 'utils';
-    if (lower.includes('/models/') || lower.includes('/data/') || lower.includes('/db/')) return 'data';
-    if (lower.includes('/config/')) return 'config';
-    if (lower.includes('/test/') || lower.includes('.test.') || lower.includes('.spec.')) return 'test';
-    return 'other';
+    // Support modern Next.js structures and standard patterns
+    if (lower.match(/(^|\/)(app|pages|ui|views|templates|src)\//) || lower.match(/^app\//) || lower.match(/^src\//)) return 'ui';
+    if (lower.match(/(^|\/)(components|widgets)\//)) return 'component';
+    if (lower.match(/(^|\/)(services|api|controllers|routes)\//)) return 'services';
+    if (lower.match(/(^|\/)(lib|utils|helpers|core|hooks)\//)) return 'utils';
+    if (lower.match(/(^|\/)(models|data|db|store|types|interfaces)\//)) return 'data';
+    if (lower.match(/(^|\/)(config|env|constants)\//)) return 'config';
+    if (lower.match(/(^|\/)(test|__tests__|tests)\//) || lower.includes('.test.') || lower.includes('.spec.')) return 'test';
+    // Catch root level files that might be entry points
+    if (!lower.includes('/') && (lower.endsWith('.tsx') || lower.endsWith('.ts') || lower.endsWith('.js'))) return 'ui';
+    return 'other'; // Fallback so it doesn't stay undefined
   }
 }
