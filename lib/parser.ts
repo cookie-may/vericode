@@ -72,6 +72,18 @@ export class Parser {
     return fns;
   }
 
+
+  private static extractCode(lines: string[], startLine: number, endLine?: number): string {
+    const code: string[] = [];
+    const start = Math.max(0, startLine - 1);
+    const end = Math.min(lines.length, endLine || startLine + 20);
+    for (let i = start; i < end && code.length < 15; i++) {
+        code.push(lines[i]);
+    }
+    if (code.length >= 15) code.push('  // ...');
+    return code.join('\n');
+  }
+
   private static extractJavaScript(content: string, filename: string, lines: string[]): CodeFunction[] {
     const fns: CodeFunction[] = [];
     const seen = new Set<string>();
@@ -91,6 +103,7 @@ export class Parser {
           line,
           isTopLevel: true,
           isExported: content.substring(Math.max(0, match.index - 50), match.index).includes('export'),
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }
@@ -110,6 +123,7 @@ export class Parser {
           line,
           isTopLevel: true,
           isExported: content.substring(Math.max(0, match.index - 50), match.index).includes('export'),
+          code: this.extractCode(lines, line),
           type: 'arrow',
         });
       }
@@ -130,6 +144,7 @@ export class Parser {
             line,
             isTopLevel: false,
             isExported: false,
+          code: this.extractCode(lines, line),
             type: 'method',
           });
         }
@@ -160,6 +175,7 @@ export class Parser {
             line,
             isTopLevel,
             isExported: false,
+          code: this.extractCode(lines, line),
             type: 'function',
           });
         }
@@ -180,6 +196,7 @@ export class Parser {
           line,
           isTopLevel: true,
           isExported: false,
+          code: this.extractCode(lines, line),
           type: 'class',
         });
       }
@@ -207,6 +224,7 @@ export class Parser {
           line,
           isTopLevel: false,
           isExported: content.substring(Math.max(0, match.index - 100), match.index).includes('public'),
+          code: this.extractCode(lines, line),
           type: 'method',
         });
       }
@@ -234,6 +252,7 @@ export class Parser {
           line,
           isTopLevel: !match[0].includes('('),
           isExported: name[0] === name[0].toUpperCase(),
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }
@@ -262,6 +281,7 @@ export class Parser {
           line,
           isTopLevel,
           isExported: false,
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }
@@ -289,6 +309,7 @@ export class Parser {
           line,
           isTopLevel: !content.substring(0, match.index).includes('class '),
           isExported: true,
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }
@@ -316,6 +337,7 @@ export class Parser {
           line,
           isTopLevel: true,
           isExported: !content.substring(Math.max(0, match.index - 50), match.index).includes('static'),
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }
@@ -343,6 +365,7 @@ export class Parser {
           line,
           isTopLevel: true,
           isExported: match[0].includes('pub'),
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }
@@ -370,6 +393,7 @@ export class Parser {
           line,
           isTopLevel: true,
           isExported: false,
+          code: this.extractCode(lines, line),
           type: 'function',
         });
       }

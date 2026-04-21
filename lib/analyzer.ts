@@ -248,26 +248,42 @@ export class Analyzer {
 
   static detectDuplicates(files: CodeFile[], functions: CodeFunction[]): Duplicate[] {
     const duplicates: Duplicate[] = [];
+
     const commonNames = new Set([
-      'render',
-      'componentDidMount',
-      'handleClick',
-      'handleChange',
-      'init',
-      'setup',
-      'cleanup',
-      'validate',
-      'parse',
-      'get',
-      'set',
-      'create',
-      'delete',
+      'render','componentDidMount','componentWillUnmount','componentDidUpdate',
+      'shouldComponentUpdate','getDerivedStateFromProps','getSnapshotBeforeUpdate',
+      'handleClick','handleChange','handleSubmit','handleInput','handleKeyDown',
+      'handleKeyUp','handleKeyPress','handleBlur','handleFocus','handleScroll',
+      'handleMouseEnter','handleMouseLeave','handleDrag','handleDrop',
+      'onClick','onChange','onSubmit','onBlur','onFocus','onKeyDown',
+      'init','setup','cleanup','destroy','reset','clear','update','refresh',
+      'validate','parse','format','transform','convert','process','execute',
+      'get','set','fetch','load','save','create','delete','remove','add',
+      'find','filter','map','reduce','sort','merge','clone','copy',
+      'beforeEach','afterEach','beforeAll','afterAll','describe','it','test',
+      'setUp','tearDown','mock',
+      'toString','valueOf','equals','hashCode','compare','clone',
+      'serialize','deserialize','toJSON','fromJSON',
+      'index','show','store','edit',
+      '__init__','__str__','__repr__','__len__','__eq__','__hash__',
+      '__enter__','__exit__','__getattr__','__setattr__','__delattr__',
+      '__getitem__','__setitem__','__contains__','__iter__','__next__',
+      '__call__','__bool__','__lt__','__gt__','__le__','__ge__',
+      'upgrade','downgrade','setUpClass','tearDownClass',
+      'main','create_app','configure','register','on_startup','on_shutdown','lifespan',
+      'mounted','created','updated','destroyed','beforeCreate','beforeMount',
+      'ngOnInit','ngOnDestroy','ngOnChanges','ngAfterViewInit',
+      'onMount','onDestroy',
     ]);
 
+    // --- Phase 1: duplicate names across files ---
     const fnByName: Record<string, CodeFunction[]> = {};
-
     functions.forEach(fn => {
-      if (commonNames.has(fn.name) || fn.name.length < 3) return;
+      if (commonNames.has(fn.name)) return;
+      if (fn.name.length < 3) return;
+      if (fn.isClassMethod) return;
+      if (fn.name.includes('.')) return;
+      if (fn.decorators && fn.decorators.length > 0) return;
       if (!fnByName[fn.name]) fnByName[fn.name] = [];
       fnByName[fn.name].push(fn);
     });
@@ -275,18 +291,105 @@ export class Analyzer {
     Object.entries(fnByName).forEach(([name, fns]) => {
       const uniqueFiles = [...new Set(fns.map(f => f.file))];
       if (uniqueFiles.length >= 3) {
+        const codeSamples = fns.filter(f => f.code && f.code.length > 30);
+        if (codeSamples.length >= 2) {
+          const sim = Analyzer.codeSimilarity(codeSamples[0].code!, codeSamples[1].code!);
+          if (sim > 0.5) {
+            duplicates.push({
+              type: 'name',
+              name,
+              count: uniqueFiles.length,
+              files: fns.map(f => ({ file: f.file, name: f.name, line: f.line })),
+              similarity: Math.round(sim * 100),
+              suggestion: `Function "${name}" appears in ${uniqueFiles.length} files with ${Math.round(sim * 100)}% similarity - consider consolidating`,
+            });
+          }
+        }
+      }
+    });
+
+    // --- Phase 2: similar code blocks via structural fingerprint ---
+    const codeGroups: Record<string, CodeFunction[]> = {};
+    functions.forEach(fn => {
+      if (!fn.code || fn.code.length < 80) return;
+      const fp = Analyzer.codeFingerprint(fn.code);
+      if (!fp) return;
+      if (!codeGroups[fp]) codeGroups[fp] = [];
+      codeGroups[fp].push(fn);
+    });
+
+    Object.values(codeGroups).forEach(fns => {
+      if (fns.length < 2) return;
+      const uniqueFiles = [...new Set(fns.map(f => f.file))];
+      if (uniqueFiles.length < 2) return;
+      const sim = Analyzer.codeSimilarity(fns[0].code!, fns[1].code!);
+      if (sim >= 0.7) {
         duplicates.push({
-          type: 'name',
-          name,
-          count: uniqueFiles.length,
-          files: fns.map(f => ({ file: f.file, line: f.line })),
-          similarity: 100,
-          suggestion: `Function "${name}" appears in ${uniqueFiles.length} files - consider consolidating`,
+          type: 'code',
+          name: fns.map(f => f.name).join(', '),
+          count: fns.length,
+          files: fns.map(f => ({ file: f.file, name: f.name, line: f.line })),
+          similarity: Math.round(sim * 100),
+          suggestion: `Similar code blocks (${Math.round(sim * 100)}% match) - consider extracting to a shared utility`,
         });
       }
     });
 
     return duplicates;
+  }
+
+  private static codeSimilarity(code1: string, code2: string): number {
+    if (!code1 || !code2) return 0;
+    const normalize = (code: string) =>
+      code
+        .replace(/\/\/.*$/gm, '')
+        .replace(/#.*$/gm, '')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/"""[\s\S]*?"""/g, 'S')
+        .replace(/'''[\s\S]*?'''/g, 'S')
+        .replace(/['"`][^'"`]*['"`]/g, 'S')
+        .replace(/\b\d+\.?\d*\b/g, 'N')
+        .replace(/\s+/g, ' ')
+        .trim();
+    const n1 = normalize(code1);
+    const n2 = normalize(code2);
+    if (n1 === n2) return 1;
+    if (!n1.length || !n2.length) return 0;
+    const lcs = Analyzer.lcsLength(n1, n2);
+    return lcs / Math.max(n1.length, n2.length);
+  }
+
+  private static lcsLength(s1: string, s2: string): number {
+    if (s1.length > 500) s1 = s1.substring(0, 500);
+    if (s2.length > 500) s2 = s2.substring(0, 500);
+    const m = s1.length, n = s2.length;
+    let prev = new Array(n + 1).fill(0);
+    let curr = new Array(n + 1).fill(0);
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        curr[j] = s1[i - 1] === s2[j - 1] ? prev[j - 1] + 1 : Math.max(prev[j], curr[j - 1]);
+      }
+      [prev, curr] = [curr, prev];
+      curr.fill(0);
+    }
+    return prev[n];
+  }
+
+  private static codeFingerprint(code: string): string | null {
+    if (!code || code.length < 50) return null;
+    const structure = code
+      .replace(/\/\/.*$/gm, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/['"`][^'"`]*['"`]/g, '')
+      .replace(/\b[a-zA-Z_$][a-zA-Z0-9_$]*\b/g, 'I')
+      .replace(/\b\d+\.?\d*\b/g, 'N')
+      .replace(/\s+/g, '');
+    const loops = (structure.match(/for|while/g) || []).length;
+    const conditions = (structure.match(/if|\?/g) || []).length;
+    const calls = (structure.match(/I\(/g) || []).length;
+    const returns = (structure.match(/return/g) || []).length;
+    const len = Math.floor(structure.length / 50) * 50;
+    return `L${loops}C${conditions}F${calls}R${returns}S${len}`;
   }
 
   static detectLayerViolations(

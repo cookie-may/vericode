@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx tsc *)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(grep -n \"^    </div>$\\\\|^  </div>$\\\\|^  \\)$\\\\|^}$\" \"C:/Danann/1. Projects/1. Web Development/next JS/WP/2026/vericode/app/analyze/page.tsx\")"
     ]
   }
 }

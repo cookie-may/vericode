@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Zap, Shield, GitBranch, ArrowRight, Code, Terminal, Activity, FileText, Target, Database, Calculator, BarChart, CheckCircle2, Circle, Clock, ChevronDown, Check, Copy } from 'lucide-react';
+import { Zap, Shield, GitBranch, FileText, Activity, Database, Calculator, Target, BarChart, CheckCircle2, Clock, Circle, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import BackgroundEffects from './background-effects';
+import { InteractiveBackground } from './background-effects';
 
 export default function Landing() {
   return (
     <div className="relative overflow-hidden bg-transparent text-slate-200 font-sans selection:bg-brand-orange/30 min-h-screen">
-      <BackgroundEffects />
+      <InteractiveBackground />
       
       {/* Navigation */}
       <header className="relative z-50 border-b border-white/5 bg-black/20 backdrop-blur-md">
@@ -32,8 +32,9 @@ export default function Landing() {
 
           <div className="flex items-center gap-4">
             <Link href="/analyze">
-              <Button className="bg-brand-orange text-[#0A0A0C] font-bold text-xs uppercase tracking-widest hover:bg-white hover:scale-105 transition-all rounded-full px-6">
-                Launch App
+              <Button className="relative overflow-hidden bg-gradient-to-r from-brand-orange to-amber-500 hover:from-orange-500 hover:to-amber-400 text-black font-black text-xs uppercase tracking-widest hover:scale-105 transition-all rounded-full px-8 py-5 shadow-[0_0_15px_rgba(241,119,32,0.4)] hover:shadow-[0_0_25px_rgba(241,119,32,0.6)] group border-none">
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="relative drop-shadow-sm">Launch App</span>
               </Button>
             </Link>
           </div>
@@ -64,94 +65,61 @@ export default function Landing() {
   );
 }
 
-function Hero() {
-  const [copied, setCopied] = useState(false);
-  const coreAgentHash = "0xVRC-NODE-992-ALPHA";
+import { PrivacyOrbit } from './privacy-orbit';
+import { WalletInput } from './wallet-input';
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(coreAgentHash);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+function Hero() {
+  const handleAnalyze = async (repoUrl: string) => {
+    // Navigate to analyze page with the repo URL
+    window.location.href = `/analyze?repo=${encodeURIComponent(repoUrl)}`;
   };
 
   return (
-    <section className="pt-24 pb-16 px-4 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto flex flex-col items-center text-center space-y-8">
-        
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-orange/10 border border-brand-orange/20 rounded-full text-brand-orange text-xs font-bold uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
-            AI-POWERED ARCHITECTURE INTEL
+    <section className="pt-20 pb-16 px-4 relative overflow-hidden">
+      {/* Container with Grid Layout for Side-by-Side Effect */}
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+
+        {/* LEFT COLUMN: Text Content & Interaction */}
+        <div className="text-center lg:text-left space-y-8 relative z-10">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-orange/10 border border-brand-orange/30 rounded-full text-brand-orange text-xs font-bold shadow-[0_0_15px_rgba(241,119,32,0.2)]">     
+                <span className="w-2 h-2 rounded-full bg-brand-orange animate-pulse shadow-[0_0_8px_rgba(241,119,32,0.8)]"></span>
+                AI-POWERED ARCHITECTURE INTEL
+            </div>
+
+            {/* Main Title - Removed line height clipping by using leading-normal and padding */}
+            <h1 className="text-5xl md:text-7xl font-black leading-normal drop-shadow-2xl">
+                <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">Vericode</span>
+                <span className="block bg-gradient-to-r from-brand-orange via-amber-400 to-orange-600 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(241,119,32,0.6)] mt-2 pb-4">
+                    Tactical Engine
+                </span>
+            </h1>
+
+            {/* Description */}
+            <p className="text-xl text-slate-300 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed shadow-sm drop-shadow-md">
+                Analyze any GitHub repository architecture instantly. Map dependencies, assess blast radius, and deploy data-driven refactoring intelligence.
+            </p>
         </div>
 
-        {/* Main Title */}
-        <h1 className="text-5xl md:text-7xl font-black leading-[0.9] tracking-tighter">
-            <span className="block text-white uppercase">Vericode</span>
-            <span className="bg-gradient-to-r from-brand-orange via-orange-400 to-white bg-clip-text text-transparent uppercase">
-                Tactical Engine
-            </span>
-        </h1>
-        
-        {/* Description */}
-        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Analyze any GitHub repository architecture instantly. Map dependencies, assess blast radius, and deploy data-driven refactoring intelligence.
-        </p>
-
-        {/* ACTION SECTION */}
-        <div className="pt-4 max-w-md mx-auto flex flex-col items-center w-full">
-            
-            <Link href="/analyze" className="w-full">
-              <Button size="lg" className="w-full h-14 bg-brand-orange text-[#0A0A0C] text-lg font-black uppercase tracking-widest hover:bg-white hover:shadow-[0_0_30px_rgba(241,119,32,0.3)] transition-all rounded-xl group">
-                Initialize Scan
-                <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-
-            <div className="flex flex-col gap-6 mt-8 w-full">
-                {/* ACTION ROW: Docs & Socials */}
-                <div className="flex items-center justify-center gap-4">
-                    <Link href="#" className="group inline-flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/30 rounded-lg text-sm font-bold uppercase tracking-widest text-slate-300 transition-all">
-                        <FileText className="w-4 h-4 text-brand-orange group-hover:text-white" />
-                        <span>Documentation</span>
-                    </Link>
-
-                    <a href="https://github.com" target="_blank" className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-orange/50 rounded-lg text-slate-400 hover:text-white transition-all group">
-                        <GitBranch className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    </a>
-                </div>
-
-                {/* CA SECTION */}
-                <div className="flex items-center justify-center mt-4">
-                    <div onClick={handleCopy} className="group flex items-center gap-3 px-4 py-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-full hover:border-brand-orange/40 transition-all cursor-pointer">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-brand-orange transition-colors">HASH:</span>
-                        <span className="font-mono text-xs text-slate-300 group-hover:text-white transition-colors">
-                            {coreAgentHash}
-                        </span>
-                        <div className="w-px h-4 bg-white/10 mx-1"></div>
-                        {copied ? (
-                            <Check className="w-3.5 h-3.5 text-green-400 animate-in zoom-in duration-300" />
-                        ) : (
-                            <Copy className="w-3.5 h-3.5 text-slate-500 group-hover:text-white transition-colors" />
-                        )}
-                    </div>
-                </div>
-            </div>
+        {/* RIGHT COLUMN: placeholder / orbit visual */}
+        <div className="hidden lg:flex items-center justify-center relative z-10">
+          <PrivacyOrbit />
         </div>
       </div>
 
-      {/* Feature Cards Grid */}
+      {/* Feature Cards Grid (Below the fold) */}
       <div className="max-w-5xl mx-auto mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-        <FeatureCard 
+        <FeatureCard
           icon={<GitBranch className="w-6 h-6" />}
           title="Dependency Mapping"
-          description="Interactive D3.js force-directed graphs showing exactly how your files interact."
+          description="Interactive D3.js force-directed graphs showing exactly how your files interact and connect."
         />
-        <FeatureCard 
+        <FeatureCard
           icon={<Shield className="w-6 h-6" />}
           title="Security & Risk"
-          description="Evaluate deep blast radius, file vulnerability, and hardcoded risk exposures."
+          description="Evaluate deep blast radius, file vulnerability, and hardcoded risk exposures instantly."
         />
-        <FeatureCard 
+        <FeatureCard
           icon={<Activity className="w-6 h-6" />}
           title="Architecture Score"
           description="Proprietary 0-100 health engine giving you clear, programmatic refactoring signals."
@@ -164,19 +132,26 @@ function Hero() {
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
     <div className="group relative p-6 rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2">
-      <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-sm border border-white/5 rounded-2xl transition-colors duration-500 group-hover:border-brand-orange/40 group-hover:bg-brand-orange/5" />
+
+      {/* 1. GLASS BASE */}
+      <div className="absolute inset-0 bg-white/3 backdrop-blur-md border border-white/10 rounded-2xl transition-colors duration-500 group-hover:border-brand-orange/40 group-hover:bg-brand-orange/5" />
+
+      {/* 2. HOVER GLOW */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-orange/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
+      {/* 3. CONTENT */}
       <div className="relative z-10">
-        <div className="w-12 h-12 mb-4 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20 group-hover:scale-110 group-hover:bg-brand-orange/20 group-hover:border-brand-orange/50 transition-all duration-300 shadow-[0_0_15px_rgba(241,119,32,0.1)]">
-          <div className="text-brand-orange group-hover:text-white transition-colors duration-300">
+        <div className="w-12 h-12 mb-4 rounded-xl bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20 group-hover:scale-110 group-hover:bg-brand-orange/20 group-hover:border-brand-orange/50 transition-all duration-300 shadow-[0_0_15px_rgba(255,140,0,0.1)]">
+          <div className="text-brand-orange group-hover:text-accent transition-colors duration-300">
             {icon}
           </div>
         </div>
-        <h3 className="text-lg font-black uppercase tracking-widest text-white mb-2 group-hover:text-brand-orange transition-colors duration-300">
+
+        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-brand-orange transition-colors duration-300">
           {title}
         </h3>
-        <p className="text-sm font-medium text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+
+        <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
           {description}
         </p>
       </div>
@@ -208,12 +183,15 @@ function HowItWorks() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {steps.map((step, i) => (
-            <div key={i} className="group p-6 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-brand-orange/30 transition-all duration-300">
-              <div className="w-12 h-12 rounded-lg bg-brand-orange/10 flex items-center justify-center text-brand-orange mb-4 group-hover:scale-110 transition-transform">
-                <step.icon className="w-6 h-6" />
+            <div key={i} className="group relative p-8 rounded-3xl border border-white/5 bg-black/40 backdrop-blur-md hover:bg-black/60 hover:border-brand-orange/50 transition-all duration-500 shadow-lg hover:shadow-[0_0_30px_rgba(241,119,32,0.25)] overflow-hidden hover:-translate-y-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-orange/0 via-brand-orange/5 to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-orange/10 blur-[50px] rounded-full group-hover:bg-brand-orange/20 transition-colors" />
+              
+              <div className="relative z-10 w-14 h-14 rounded-2xl bg-brand-orange/10 flex items-center justify-center text-brand-orange mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(241,119,32,0.4)] border border-brand-orange/20 group-hover:border-brand-orange/50">
+                <step.icon className="w-7 h-7 drop-shadow-[0_0_8px_rgba(241,119,32,0.8)]" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">{step.desc}</p>
+              <h3 className="relative z-10 text-2xl font-bold text-slate-200 mb-3 group-hover:text-brand-orange transition-colors drop-shadow-sm">{step.title}</h3>
+              <p className="relative z-10 text-slate-400 leading-relaxed font-medium group-hover:text-slate-300 transition-colors">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -299,16 +277,16 @@ function FAQ() {
           {faqs.map((item, i) => {
             const isOpen = openIndex === i;
             return (
-              <div key={i} className={`group border rounded-xl overflow-hidden transition-all ${isOpen ? 'border-brand-orange/50 bg-brand-orange/5' : 'border-white/10 bg-white/5 hover:border-white/30'}`}>
-                <button 
+              <div key={i} className={`group border rounded-2xl overflow-hidden transition-all duration-300 ${isOpen ? 'border-brand-orange/60 bg-black/60 shadow-[0_0_20px_rgba(241,119,32,0.15)]' : 'border-white/10 bg-black/40 hover:bg-black/60 hover:border-brand-orange/30 hover:shadow-lg backdrop-blur-sm'}`}>
+                <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between py-4 px-6 font-bold uppercase tracking-widest text-[11px] text-left text-white transition-all"
+                  className="flex w-full items-center justify-between py-6 px-8 font-bold uppercase tracking-widest text-[12px] text-left text-slate-100 hover:text-brand-orange transition-colors"
                 >
-                  {item.q}
-                  <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-orange' : 'text-slate-500'}`} />
+                  <span className="drop-shadow-sm">{item.q}</span>
+                  <ChevronDown className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-orange drop-shadow-[0_0_8px_rgba(241,119,32,0.8)]' : 'text-slate-500'}`} />
                 </button>
-                <div className={`overflow-hidden transition-all duration-300 px-6 ${isOpen ? 'max-h-40 pb-4' : 'max-h-0'}`}>
-                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{item.a}</p>
+                <div className={`overflow-hidden transition-all duration-500 px-8 ${isOpen ? 'max-h-40 pb-6 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <p className="text-slate-400 font-medium text-sm leading-relaxed border-l-2 border-brand-orange/30 pl-4">{item.a}</p>
                 </div>
               </div>
             );
