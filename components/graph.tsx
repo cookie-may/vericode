@@ -6,7 +6,7 @@ import { GraphData, GraphNode } from '@/types';
 interface GraphProps {
   data: GraphData;
   onNodeClick?: (node: GraphNode) => void;
-  colorMode?: 'layer' | 'folder';
+  colorMode?: 'layer' | 'folder' | 'churn';
 }
 
 export const LAYER_COLORS: Record<string, string> = {
@@ -51,7 +51,7 @@ export default function Graph({ data, onNodeClick, colorMode = 'layer' }: GraphP
 
     const W = container.clientWidth;
     const H = container.clientHeight;
-    container.innerHTML = '';
+    container.replaceChildren();
 
     // ── SVG ────────────────────────────────────────────────────────────
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -360,7 +360,8 @@ export default function Graph({ data, onNodeClick, colorMode = 'layer' }: GraphP
       cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
-      if (container) container.innerHTML = '';
+      // Use replaceChildren() so React never sees a removeChild on our native nodes
+      if (container) container.replaceChildren();
     };
   }, [data, getColor, colorMode, onNodeClick]);
 
@@ -368,7 +369,8 @@ export default function Graph({ data, onNodeClick, colorMode = 'layer' }: GraphP
   const legend = colorMode === 'layer' ? Object.entries(LAYER_COLORS) : null;
 
   return (
-    <div ref={containerRef} className="w-full h-full bg-[#08080A] relative">
+    <div className="w-full h-full bg-[#08080A] relative">
+      <div ref={containerRef} className="absolute inset-0" />
       {legend && (
         <div className="absolute bottom-4 left-4 flex flex-col gap-1.5 pointer-events-none z-10">
           {legend.map(([layer, color]) => (

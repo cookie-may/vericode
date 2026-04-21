@@ -31,9 +31,6 @@ export class GitHubClient {
       Object.entries(headers).filter(([, v]) => v !== '')
     );
 
-    console.log('Making GitHub API request to:', url);
-    console.log('Using authorization:', this.token ? 'yes' : 'no');
-
     const response = await fetch(url, { ...options, headers: cleanHeaders });
 
     if (!response.ok) {
@@ -120,11 +117,13 @@ export class GitHubClient {
     owner: string,
     repo: string,
     branch: string = 'main',
-    excludePatterns: string[] = ['node_modules', '.git', 'dist', 'build']
+    excludePatterns: string[] = ['node_modules', '.git', 'dist', 'build'],
+    onProgress?: (message: string) => void
   ): Promise<CodeFile[]> {
     const files: CodeFile[] = [];
 
     try {
+      if (onProgress) onProgress("Fetching File Tree Structure...");
       // Get file tree
       const tree = await this.getFileTree(owner, repo, branch);
 
@@ -140,10 +139,16 @@ export class GitHubClient {
         }
       );
 
+      const filesToProcess = codeFiles.slice(0, 500);
+      const totalFiles = filesToProcess.length;
+
       // Fetch content for each file
-      for (const file of codeFiles.slice(0, 500)) {
+      for (let i = 0; i < totalFiles; i++) {
+        const file = filesToProcess[i];
         const name = file.path?.split('/').pop() || file.path || '';
         if (!name) continue;
+        
+        if (onProgress) onProgress(`Analyzing ${i + 1}/${totalFiles}: ${name}`);
         // Limit to 500 files for performance
         try {
           const content = await this.getFileContent(owner, repo, file.path, branch);

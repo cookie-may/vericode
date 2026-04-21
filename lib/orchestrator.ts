@@ -19,20 +19,23 @@ export class CodeAnalyzer {
   async analyzeGitHubRepo(
     repoUrl: string,
     token?: string,
-    excludePatterns: string[] = ['node_modules', '.git', 'dist', 'build']
+    excludePatterns: string[] = ['node_modules', '.git', 'dist', 'build'],
+    onProgress?: (message: string) => void
   ): Promise<AnalysisResult> {
     const github = new GitHubClient(token);
     const { owner, repo } = github.parseRepoUrl(repoUrl);
 
     try {
-      this.files = await github.analyzeRepository(owner, repo, 'main', excludePatterns);
+      if (onProgress) onProgress("Initializing GitHub Engine...");
+      this.files = await github.analyzeRepository(owner, repo, 'main', excludePatterns, onProgress);
     } catch (err: any) {
       if (err?.message?.includes('404') || err?.message?.includes('not found')) {
-        this.files = await github.analyzeRepository(owner, repo, 'master', excludePatterns);
+        this.files = await github.analyzeRepository(owner, repo, 'master', excludePatterns, onProgress);
       } else {
         throw err;
       }
     }
+    if (onProgress) onProgress("Finalizing Architecture Graph...");
     return this.performAnalysis();
   }
 
