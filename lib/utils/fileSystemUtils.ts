@@ -82,8 +82,7 @@ export class FileSystemUtils {
     }
 
     /**
-     * Writes content to a text file. Creates the directory if it doesn't exist.
-     * @param filePath The path to the file.
+     * Writes content to a text file. Creates the directory if it doesn't exist.\n* @param filePath The path to the file.
      * @param content The content to write.
      * @returns A promise resolving when the file is written.
      */
@@ -109,8 +108,7 @@ async function demonstrateFileSystemUtils() {
     // Example directory path (relative to script execution)
     const exampleDir = 'temp_test_dir/subdir';
     const exampleFile = path.join(exampleDir, 'test_file.txt');
-    const fileContent = 'Hello from FileSystemUtils!
-This is a test file.';
+    const fileContent = 'Hello from FileSystemUtils!\nThis is a test file.';
 
     // 1. Create directory
     await fsUtils.createDirectory(exampleDir);
@@ -138,10 +136,8 @@ ${readContent}
     const itemsInDir = await fsUtils.readDirectory(exampleDir);
     console.log(`Items found in '${exampleDir}':`, itemsInDir);
 
-    // Clean up: In a real test, you'd remove the created directory and file.
-    // For this example, we'll omit cleanup to keep it simple.
-    console.log('
-(Skipping cleanup for demonstration)');
+    // Clean up: In a real test, you'd remove the created directory and file.\n// For this example, we'll omit cleanup to keep it simple.
+    console.log('\n(Skipping cleanup for demonstration)');
 }
 
 // Note: fs and path are Node.js built-in modules.

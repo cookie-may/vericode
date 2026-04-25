@@ -6,15 +6,11 @@
  * or implement simpler layout algorithms.
  */
 
-import { GraphNode } from './GraphNode'; // Assuming GraphNode interface/class is defined
-
-interface GraphLink {
-    source: string; // Corresponds to GraphNode.id
-    target: string; // Corresponds to GraphNode.id
-}
+import { GraphNode } from './GraphNode';
+import { GraphLink } from './GraphLink';
 
 // Represents the computed layout positions for nodes and links
-interface GraphLayout {
+export interface GraphLayout {
     nodes: Array<GraphNode & { x: number; y: number; fx?: number; fy?: number }>;
     links: Array<GraphLink & { /* layout-specific properties like curvature */ }>;
 }
@@ -57,8 +53,7 @@ export class GraphLayoutEngine {
         const layoutLinks = this.links;
 
         // Simulate layout convergence (in a real engine, this would be iterative)
-        // For simplicity, we'll just adjust positions slightly and add some randomness.
-        for (let i = 0; i < 50; i++) { // Simulate a few iterations
+        // For simplicity, we'll just adjust positions slightly and add some randomness.\nfor (let i = 0; i < 50; i++) { // Simulate a few iterations
             layoutNodes.forEach(node => {
                 // Simple repulsion/attraction simulation (very basic)
                 // Push nodes apart
@@ -92,7 +87,7 @@ export class GraphLayoutEngine {
                     }
                 });
                  // Boundary constraints (simple example)
-                node.x = Math.max(20, Math.min(780, node.x));
+                node.x = Math.max(20, Math.min(780, node.x)) ;
                 node.y = Math.max(20, Math.min(580, node.y));
             });
         }
@@ -149,13 +144,11 @@ async function demonstrateGraphLayoutEngine() {
 
     layoutEngine.setData(mockNodes, mockLinks);
 
-    console.log('
---- Calculating Force-Directed Layout ---');
+    console.log('\n--- Calculating Force-Directed Layout ---');
     const forceLayout = await layoutEngine.calculateForceDirectedLayout();
     console.log('Force-directed layout result (first node):', forceLayout.nodes[0]);
 
-    console.log('
---- Applying Fixed Layout ---');
+    console.log('\n--- Applying Fixed Layout ---');
     const fixedPositions = [
         { id: 'src/main.ts', x: 100, y: 100 },
         { id: 'src/utils.ts', x: 300, y: 100 },

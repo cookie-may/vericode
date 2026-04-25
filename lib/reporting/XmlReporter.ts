@@ -17,8 +17,7 @@ export class XmlReporter implements IReportFormatter {
 `;
 
         if (report.results.length === 0) {
-            xml += '  <summary>No analysis results found.</summary>
-';
+            xml += '  <summary>No analysis results found.</summary>\n';
         } else {
             // Add summary details
             const totalFiles = report.results.length;
@@ -87,13 +86,11 @@ export class XmlReporter implements IReportFormatter {
      * Basic XML escaping for attribute values and text content.
      */
     private escapeXml(unsafe: string): string {
-        return unsafe.replace(/[<>&'"]/g, (c) => {
-            switch (c) {
+        return unsafe.replace(/[<>&'"]/g, (c) => {\nswitch (c) {
                 case '<': return '&lt;';
                 case '>': return '&gt;';
                 case '&': return '&amp;';
-                case ''': return '&apos;';
-                case '"': return '&quot;';
+                case ''': return '&apos;';\ncase '"': return '&quot;';
                 default: return c;
             }
         });
@@ -119,17 +116,14 @@ async function demonstrateXmlReporter() {
     };
 
     const formattedReport = xmlFormatter.format(reportData);
-    console.log('
---- Generated XML Report ---');
+    console.log('\n--- Generated XML Report ---');
     // In a real scenario, this would be written to a file.
-    console.log(formattedReport.substring(0, 500) + '
-...'); // Log first 500 chars
+    console.log(formattedReport.substring(0, 500) + '\n...'); // Log first 500 chars
 }
 
 // This mock assumes IReportFormatter is available in the scope.
 // In a real setup, it would be imported from './ReportGenerator' or similar.
-// For standalone execution context, we'll define a placeholder if not available.
-if (typeof IReportFormatter === 'undefined') {
+// For standalone execution context, we'll define a placeholder if not available.\nif (typeof IReportFormatter === 'undefined') {
      // @ts-ignore
     global.IReportFormatter = { format: (report: Report) => '' }; // Placeholder
 }

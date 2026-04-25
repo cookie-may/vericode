@@ -81,8 +81,7 @@ function demonstrateStringUtils() {
     console.log(`Is "" empty?`, utils.isEmpty(''));
     console.log(`Is null empty?`, utils.isEmpty(null));
 
-    console.log('
---- Snake Case Tests ---');
+    console.log('\n--- Snake Case Tests ---');
     console.log(`Original: "${testSnakeCase}"`);
     console.log('CamelCase:', utils.toCamelCase(testSnakeCase));
     console.log('PascalCase:', utils.toPascalCase(testSnakeCase));

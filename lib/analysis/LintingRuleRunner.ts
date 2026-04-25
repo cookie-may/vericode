@@ -29,7 +29,7 @@ export class LintingRuleRunner {
                 issues.push({
                     filePath: filePath,
                     rule: 'no-unused-variable',
-                    message: 'Variable 'unusedVar' is declared but never used.',
+                    message: 'Variable \'unusedVar\' is declared but never used.',
                     line: Math.floor(Math.random() * 50) + 1,
                     column: Math.floor(Math.random() * 80) + 1,
                 });
@@ -90,8 +90,7 @@ async function demonstrateLintingRuleRunner() {
 
     const lintResults = await linter.lintProject(filesToLint);
 
-    console.log('
---- Linting Results Summary ---');
+    console.log('\n--- Linting Results Summary ---');
     if (lintResults.length === 0) {
         console.log('No linting issues found.');
     } else {

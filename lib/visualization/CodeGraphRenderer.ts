@@ -1,4 +1,4 @@
-/*
+﻿/*
  * lib/visualization/CodeGraphRenderer.ts
  *
  * This module is responsible for rendering a code dependency graph.
@@ -81,8 +81,7 @@ export class CodeGraphRenderer {
             return;
         }
 
-        console.log('
-[CodeGraphRenderer] Rendering graph visualization...');
+        console.log('[CodeGraphRenderer] Rendering graph visualization...');
         console.log('Nodes:', this.graphData.nodes.length);
         console.log('Links:', this.graphData.links.length);
 

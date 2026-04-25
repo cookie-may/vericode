@@ -96,13 +96,10 @@ async function demonstrateHtmlReporter() {
     const htmlReporter = new ReportGenerator(htmlFormatter); // Reusing ReportGenerator from previous module
     const htmlReport = htmlReporter.generateReport('HTML Analysis Report', mockResults);
 
-    console.log('
---- Generated HTML Report (Content Below) ---');
+    console.log('\n--- Generated HTML Report (Content Below) ---');
     // In a real scenario, this would be written to an HTML file.
-    // For console output, we'll just log a snippet.
-    console.log(htmlReport.substring(0, 500) + '
-...'); // Log first 500 chars
-    console.log('--- End of HTML Report Snippet ---');
+    // For console output, we'll just log a snippet.\nconsole.log(htmlReport.substring(0, 500) + '
+...'); // Log first 500 chars\nconsole.log('--- End of HTML Report Snippet ---');
 }
 
 demonstrateHtmlReporter();

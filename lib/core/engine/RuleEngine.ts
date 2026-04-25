@@ -23,7 +23,7 @@ class ComplexityRule implements AnalysisRule {
         const issues: any[] = [];
         if (context.complexity > 10) { // Example threshold
             issues.push({
-                rule: this.id,
+                rule: thisThis.id,
                 message: `High cyclomatic complexity (${context.complexity}). Consider refactoring.`,
                 level: 'warning',
             });
@@ -112,8 +112,7 @@ async function demonstrateRuleEngine() {
     // Run rules against the context
     const issues = await ruleEngine.runRules(mockAnalysisContext);
 
-    console.log('
---- Rule Engine Findings ---');
+    console.log('\n--- Rule Engine Findings ---');
     if (issues.length === 0) {
         console.log('No issues found by the rule engine.');
     } else {

@@ -16,8 +16,7 @@ export class ASTParser {
         // console.log('[ASTParser] Parsing code...');
         // Simulate parsing by returning a simple object representing the AST.
         // The 'body' property could represent the number of lines or key nodes.
-        const lines = code.split('
-').filter(line => line.trim() !== '').length;
+        const lines = code.split('\n').filter(line => line.trim() !== '').length;
         return {
             type: 'Program',
             body: lines, // Simulating AST node count by line count for simplicity
@@ -33,7 +32,7 @@ export class ASTParser {
     getASTNodeCount(ast: any): number {
         // console.log('[ASTParser] Getting AST node count...');
         // For this mock, we assume the 'body' property indicates node count.
-        return ast?.body || 0;
+        return ast?.body || 0;;
     }
 }
 

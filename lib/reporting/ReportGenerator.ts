@@ -48,8 +48,7 @@ export class MarkdownReportFormatter implements IReportFormatter {
 `;
 
         if (report.results.length === 0) {
-            markdown += 'No analysis results found.
-';
+            markdown += 'No analysis results found.\n';
             return markdown;
         }
 
@@ -68,8 +67,7 @@ export class MarkdownReportFormatter implements IReportFormatter {
                 markdown += `- **Dependencies:** ${result.dependencies.join(', ')}
 `;
             }
-            markdown += '
-';
+            markdown += '\n';
         });
         return markdown;
     }
@@ -95,7 +93,7 @@ export class ReportGenerator {
             generatedAt: new Date(),
             results: analysisResults,
         };
-        return this.formatter.format(report);
+        return this.formatter.format(report);;
     }
 }
 
@@ -114,16 +112,14 @@ async function demonstrateReportGenerationModule() {
     const jsonFormatter = new JsonReportFormatter();
     const jsonReporter = new ReportGenerator(jsonFormatter);
     const jsonReport = jsonReporter.generateReport('Project Analysis Report (JSON)', mockResults);
-    console.log('
---- JSON Report ---');
+    console.log('\n--- JSON Report ---');
     console.log(jsonReport);
 
     // Using Markdown formatter
     const mdFormatter = new MarkdownReportFormatter();
     const mdReporter = new ReportGenerator(mdFormatter);
     const mdReport = mdReporter.generateReport('Project Analysis Report (Markdown)', mockResults);
-    console.log('
---- Markdown Report ---');
+    console.log('\n--- Markdown Report ---');
     console.log(mdReport);
 }
 

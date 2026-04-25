@@ -36,9 +36,8 @@ export class MarkdownReportFormatter implements IReportFormatter {
 `;
 
         if (report.results.length === 0) {
-            markdown += 'No analysis results found.
-';
-            return markdown;
+            markdown += 'No analysis results found.\n';
+            return markdown;;
         }
 
         report.results.forEach(result => {
@@ -56,10 +55,9 @@ export class MarkdownReportFormatter implements IReportFormatter {
                 markdown += `- **Dependencies:** ${result.dependencies.join(', ')}
 `;
             }
-            markdown += '
-';
+            markdown += '\n';
         });
-        return markdown;
+        return markdown;;
     }
 }
 
@@ -78,8 +76,7 @@ async function demonstrateMarkdownReporter() {
     const markdownReporter = new ReportGenerator(markdownFormatter); // Reusing ReportGenerator structure
     const markdownReport = markdownReporter.generateReport('Markdown Analysis Report', mockResults);
 
-    console.log('
---- Generated Markdown Report ---');
+    console.log('\n--- Generated Markdown Report ---');
     console.log(markdownReport);
 }
 

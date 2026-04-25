@@ -1,4 +1,4 @@
-/*
+﻿/*
  * lib/analysis/CodeAnalyzer.ts
  *
  * This module orchestrates various code analysis tasks, acting as a central
@@ -121,8 +121,7 @@ export class CodeAnalyzer {
 class MockASTParser {
     parse(content: string): any {
         // console.log('[MockASTParser] Parsing content...');
-        return { type: 'Program', body: content.split('
-').filter(line => line.trim() !== '').length };
+        return { type: 'Program', body: content.split('\n').filter(line => line.trim() !== '').length };
     }
     getASTNodeCount(ast: any): number {
         // console.log('[MockASTParser] Getting AST node count...');
@@ -159,13 +158,13 @@ class MockSecurityAnalyzer {
 
 // Monkey-patch the CodeAnalyzer's dependencies if they aren't properly injected/available
 // This is a hack for demonstration. Proper DI would be preferred.
-// @ts-ignore - Temporarily override for demo
+// @ts-expect-error - Temporarily override for demo
 CodeAnalyzer.prototype.astParser = new MockASTParser();
-// @ts-ignore
+// @ts-expect-error
 CodeAnalyzer.prototype.complexityAnalyzer = new MockComplexityAnalyzer();
-// @ts-ignore
+// @ts-expect-error
 CodeAnalyzer.prototype.securityAnalyzer = new MockSecurityAnalyzer();
-// @ts-ignore
+// @ts-expect-error
 CodeAnalyzer.prototype.dependencyAnalyzer = new DependencyAnalyzer();
 
 // --- Example Usage ---
@@ -183,8 +182,7 @@ async function demonstrateCodeAnalyzer() {
 
     const results = await analyzer.analyzeProject(filesToAnalyze);
 
-    console.log('
---- Analysis Summary ---');
+    console.log('--- Analysis Summary ---');
     results.forEach(result => {
         console.log(`File: ${result.filePath}`);
         console.log(`  Complexity: ${result.complexity}`);

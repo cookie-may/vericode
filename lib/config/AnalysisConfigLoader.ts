@@ -5,8 +5,7 @@
  * Supports loading from different sources (e.g., JSON files, environment variables).
  */
 
-// Removed 'import { type } from "os";' as it's not used and might cause issues in some environments.
-// If OS-specific path handling is needed, it should be handled more robustly.
+// Removed 'import { type } from "os";' as it's not used and might cause issues in some environments.\n// If OS-specific path handling is needed, it should be handled more robustly.
 
 // Define the structure for analysis configuration
 interface AnalysisConfig {
@@ -172,8 +171,7 @@ async function setupAnalysisConfig() {
     const configManager = new AnalysisConfigManager([jsonLoader, envLoader]);
     await configManager.initialize();
 
-    console.log('
---- Loaded Configuration ---');
+    console.log('\n--- Loaded Configuration ---');
     console.log('Target Files:', configManager.get('targetFiles'));
     console.log('Output Format:', configManager.get('outputFormat'));
     console.log('Security Scan Enabled:', configManager.get('rules').security.enabled);
@@ -181,8 +179,7 @@ async function setupAnalysisConfig() {
     console.log('Output File:', configManager.get('outputFile') || 'Not specified');
 
     const allConfig = configManager.getAll();
-    console.log('
---- All Configuration (Deep Copy) ---');
+    console.log('\n--- All Configuration (Deep Copy) ---');
     console.log(JSON.stringify(allConfig, null, 2));
 }
 

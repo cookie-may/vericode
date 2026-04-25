@@ -1,4 +1,4 @@
-/*
+﻿/*
  * lib/visualization/GraphNodeStyleMapper.ts
  *
  * Maps graph node properties to visual styles for rendering.
@@ -23,7 +23,7 @@ export class GraphNodeStyleMapper {
      */
     getMappedStyle(node: GraphNode): NodeStyle {
         // Default style
-        let style: NodeStyle = {
+        const style: NodeStyle = {
             color: this.getColorByGroup(node.group),
             size: this.getSizeBasedOnLabel(node.label), // Simulate size based on label length for demo
             shape: 'circle',

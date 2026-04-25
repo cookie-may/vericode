@@ -2,8 +2,7 @@
  * lib/core/engine/ScannerEngine.ts
  *
  * The main orchestrator for the code scanning process. It coordinates
- * different analyzers and reporters to process a project's files.
- */
+ * different analyzers and reporters to process a project's files.\n*/
 
 import { CodeAnalyzer, AnalysisResult } from '../../analysis/CodeAnalyzer';
 import { DependencyAnalyzer } from '../../analysis/DependencyCalculator';
@@ -93,7 +92,7 @@ export class ScannerEngine {
         const jsonReport = this.jsonReporter.generateReport('Project Scan Report (JSON)', analysisResults);
         const htmlReport = this.htmlReporter.generateReport('Project Scan Report (HTML)', analysisResults);
 
-        console.log('[ScannerEngine] Scan process completed. Reports generated.');
+        console.log('[ScannerEngine] Scan process completed. Reports generated.');  
 
         // Return reports and graph data
         return { jsonReport, htmlReport, graphData: graphLayout };
@@ -118,17 +117,12 @@ async function demonstrateScannerEngine() {
 
     const scanResults = await engine.scanProject(filesToScan);
 
-    console.log('
---- Scanner Engine Scan Complete ---');
-    console.log('JSON Report Snippet:
-', scanResults.jsonReport.substring(0, 400) + '
-...');
-    console.log('
+    console.log('\n--- Scanner Engine Scan Complete ---');
+    console.log('JSON Report Snippet:\n', scanResults.jsonReport.substring(0, 400) + '
+...');\nconsole.log('
 HTML Report Snippet:
 ', scanResults.htmlReport.substring(0, 500) + '
-...');
-    console.log('
-Graph Layout Data (first node):', scanResults.graphData.nodes.length > 0 ? scanResults.graphData.nodes[0] : 'No nodes');
-}
+...');\nconsole.log('
+Graph Layout Data (first node):', scanResults.graphData.nodes.length > 0 ? scanResults.graphData.nodes[0] : 'No nodes');\n}
 
 demonstrateScannerEngine();

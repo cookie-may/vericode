@@ -1,4 +1,4 @@
-/*
+﻿/*
  * lib/visualization/NodeStyleManager.ts
  *
  * Manages the styling of nodes in the dependency graph based on their properties
@@ -22,7 +22,7 @@ export class NodeStyleManager {
      * @returns A NodeStyle object defining visual properties.
      */
     getStyle(node: GraphNode): NodeStyle {
-        let style: NodeStyle = {
+        const style: NodeStyle = {
             color: this.getColorByGroup(node.group),
             size: this.getSizeByComplexity(node.label), // Simulate complexity lookup
             shape: 'ellipse', // Default shape

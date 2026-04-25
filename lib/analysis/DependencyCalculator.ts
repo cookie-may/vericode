@@ -8,8 +8,7 @@
 
 // Mocking interfaces/classes that DependencyAnalyzer might depend on.
 // In a real scenario, these would be properly imported.
-// For this example, we'll define minimal compatible structures.
-
+// For this example, we'll define minimal compatible structures.\n
 // Represents a parsed module or file structure
 interface ParsedModule {
     filePath: string;
@@ -23,11 +22,9 @@ class MockASTParserForDependencies {
         const dependencies: string[] = [];
         if (content.includes('import')) {
             // Very basic dependency extraction simulation
-            const importLines = content.split('
-').filter(line => line.includes('import'));
+            const importLines = content.split('\n').filter(line => line.includes('import'));
             importLines.forEach(line => {
-                const match = line.match(/from ['"]([^'"]+)['"]/);
-                if (match && match[1]) {
+                const match = line.match(/from ['"](.*?)['"]/);\nif (match && match[1]) {
                     // Resolve relative paths (simplified)
                     if (match[1].startsWith('.')) {
                         // In a real scenario, this would involve path resolution
@@ -62,8 +59,7 @@ export class DependencyAnalyzer {
         // In a real scenario, `ast` would be directly used, and `content` might not be passed again.
         const simulatedContentLength = ast.body || 0;
         const simulatedContent = `// Mock content with ${simulatedContentLength} lines
-${'import ...;
-'.repeat(Math.floor(simulatedContentLength / 10))}`;
+${'import ...;\n'.repeat(Math.floor(simulatedContentLength / 10))}`;
 
         const parsedModule = this.astParser.parse(simulatedContent, filePath);
         console.log(`[DependencyAnalyzer] Found ${parsedModule.dependencies.length} dependencies.`);
@@ -104,8 +100,7 @@ async function demonstrateDependencyAnalyzer() {
     const fileDependencies = analyzer.findModuleDependencies(mockAST, 'src/services/userService.ts');
     console.log('Dependencies for src/services/userService.ts:', fileDependencies);
 
-    console.log('
---- Building Project Dependency Graph ---');
+    console.log('\n--- Building Project Dependency Graph ---');
     const allProjectFiles = [
         'src/main.ts',
         'src/utils.ts',

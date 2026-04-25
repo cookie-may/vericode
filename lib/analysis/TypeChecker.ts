@@ -29,7 +29,7 @@ export class TypeChecker {
             if (Math.random() > 0.6) { // 40% chance of finding a type error
                 issues.push({
                     filePath: filePath,
-                    message: 'Type 'string' is not assignable to type 'number'.',
+                    message: 'Type \'string\' is not assignable to type \'number\'.',
                     line: Math.floor(Math.random() * 60) + 1,
                     column: Math.floor(Math.random() * 80) + 1,
                 });
@@ -87,8 +87,7 @@ async function demonstrateTypeChecker() {
 
     const typeCheckResults = await typeChecker.checkProject(filesToCheck);
 
-    console.log('
---- Type Check Results Summary ---');
+    console.log('\n--- Type Check Results Summary ---');
     if (typeCheckResults.length === 0) {
         console.log('No type errors found.');
     } else {

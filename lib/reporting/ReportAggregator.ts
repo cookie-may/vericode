@@ -77,8 +77,7 @@ async function demonstrateReportAggregator() {
 
     const aggregatedData = aggregator.aggregate(mockResults);
 
-    console.log('
---- Aggregated Report Data ---');
+    console.log('\n--- Aggregated Report Data ---');
     console.log(JSON.stringify(aggregatedData, null, 2));
 }
 

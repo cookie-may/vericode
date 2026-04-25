@@ -25,6 +25,8 @@ interface AnalysisConfiguration {
         linting: { enabled: boolean };
         typeChecking: { enabled: boolean };
     };
+    outputFormat: 'json' | 'html' | 'markdown';
+    outputFile?: string;
 }
 
 export class AnalysisOrchestrator {
@@ -53,7 +55,7 @@ export class AnalysisOrchestrator {
         console.log('[AnalysisOrchestrator] Starting analysis pipeline...');
         const filesToAnalyze = this.config.targetFiles; // Use configured files
 
-        let allResults: AnalysisResult[] = [];
+        const allResults: AnalysisResult[] = [];
 
         // Parallelize analysis steps where possible
         const analysisPromises: Promise<AnalysisResult[]>[] = [];
@@ -61,16 +63,13 @@ export class AnalysisOrchestrator {
         // Run configured analyzers
         if (this.config.rules.complexity.enabled) {
             // For complexity, we need an AST, which is obtained by CodeAnalyzer.
-            // Let's assume CodeAnalyzer.analyzeFile provides complexity.
-            // We'll simulate this by calling analyzeFile later.
+            // Let's assume CodeAnalyzer.analyzeFile provides complexity.\n// We'll simulate this by calling analyzeFile later.
         }
 
         // Simulate running individual file analysis and aggregating results
         for (const filePath of filesToAnalyze) {
-            // For simplicity, we simulate basic analysis here.
-            // In a real app, you'd call specific analyzers based on config.
             // This is a placeholder for a more granular execution flow.
-
+            // In a real app, you'd call specific analyzers based on config.\n
             // Placeholder for combined analysis result
             const simulatedResult: AnalysisResult = {
                 filePath: filePath,
@@ -87,6 +86,7 @@ export class AnalysisOrchestrator {
             const lintIssues = await this.lintingRuleRunner.lintProject(filesToAnalyze);
             // Process lint issues to add to results (e.g., map to security warnings if relevant)
             console.log(`[AnalysisOrchestrator] Linting found ${lintIssues.length} issues.`);
+            // For simplicity, not adding lint issues to AnalysisResult directly in this mock
         }
 
         if (this.config.rules.typeChecking.enabled) {
@@ -120,20 +120,12 @@ async function demonstrateAnalysisOrchestrator() {
 
     const orchestrator = new AnalysisOrchestrator(config);
 
-    // Simulate a list of files that would be processed
-    const simulatedFiles = [
-        'src/app.tsx',
-        'src/components/MyComponent.tsx',
-        'lib/utils/helpers.ts',
-        'lib/core/engine/ASTParser.ts',
-        'src/services/apiService.ts',
-        'src/pages/index.tsx'
-    ];
+    // Simulate a list of files that would be processed based on config
+    const simulatedFiles = config.targetFiles; // In a real app, this would be resolved from glob patterns
 
     const results = await orchestrator.runAnalysisPipeline(); // Uses simulated file list internally via config
 
-    console.log('
---- Orchestrated Analysis Results ---');
+    console.log('\n--- Orchestrated Analysis Results ---');
     results.forEach(result => {
         console.log(`File: ${result.filePath}`);
         console.log(`  Complexity: ${result.complexity}, AST Nodes: ${result.astSize}`);

@@ -1,91 +1,94 @@
 /*
  * lib/utils/pathUtils.ts
  *
- * Provides utility functions for handling file paths and module resolution
- * within the codebase. This is crucial for analysis tools that need to
- * understand the project structure.
+ * Utility functions for path manipulation, including resolving relative paths,
+ * normalizing paths, and extracting path components.
  */
 
-import path from 'path'; // Node.js path module for robust path manipulation
+import * as path from 'path'; // Node.js path module
 
-/**
- * Resolves a relative path against a base file path.
- * @param basePath The path of the file making the import.
- * @param relativePath The relative path specified in the import statement.
- * @returns The absolute path of the imported module.
- */
-export function resolveModulePath(basePath: string, relativePath: string): string {
-    // Ensure path.resolve is used for cross-platform compatibility
-    const resolvedPath = path.resolve(path.dirname(basePath), relativePath);
-    console.log(`[PathUtils] Resolved '${relativePath}' against '${basePath}' to '${resolvedPath}'`);
-    return resolvedPath;
-}
+export class PathUtils {
+    /**
+     * Resolves a relative path against a base path.
+     * @param basePath The base path.
+     * @param relativePath The relative path to resolve.
+     * @returns The resolved absolute path.
+     */
+    resolvePath(basePath: string, relativePath: string): string {
+        console.log(`[PathUtils] Resolving "${relativePath}" against base "${basePath}"`);
+        return path.resolve(basePath, relativePath);
+    }
 
-/**
- * Normalizes a file path to use consistent separators (e.g., forward slashes).
- * @param filePath The path to normalize.
- * @returns The normalized path.
- */
-export function normalizePath(filePath: string): string {
-    const normalized = filePath.replace(/\/g, '/'); // Replace backslashes with forward slashes
-    console.log(`[PathUtils] Normalized path: '${filePath}' -> '${normalized}'`);
-    return normalized;
-}
+    /**
+     * Extracts the directory name from a file path.
+     * @param filePath The path to the file.
+     * @returns The directory name.
+     */
+    getDirectoryName(filePath: string): string {
+        console.log(`[PathUtils] Getting directory name for: ${filePath}`);
+        return path.dirname(filePath);
+    }
 
-/**
- * Extracts the directory name from a file path.
- * @param filePath The path to the file.
- * @returns The directory path.
- */
-export function getDirectoryName(filePath: string): string {
-    const dirName = path.dirname(filePath);
-    console.log(`[PathUtils] Directory name for '${filePath}': '${dirName}'`);
-    return dirName;
-}
+    /**
+     * Extracts the base name (file name with extension) from a path.
+     * @param filePath The path to the file.
+     * @returns The base name.
+     */
+    getBaseName(filePath: string): string {
+        console.log(`[PathUtils] Getting base name for: ${filePath}`);
+        return path.basename(filePath);
+    }
 
-/**
- * Gets the file extension of a path.
- * @param filePath The path to the file.
- * @returns The file extension (e.g., '.ts', '.js').
- */
-export function getFileExtension(filePath: string): string {
-    const ext = path.extname(filePath);
-    console.log(`[PathUtils] Extension for '${filePath}': '${ext}'`);
-    return ext;
+    /**
+     * Extracts the file extension from a path.
+     * @param filePath The path to the file.
+     * @returns The file extension (including the dot), or an empty string if no extension.
+     */
+    getExtension(filePath: string): string {
+        console.log(`[PathUtils] Getting extension for: ${filePath}`);
+        return path.extname(filePath);
+    }
+
+    /**
+     * Normalizes a path, resolving '..' and '.' segments.
+     * @param inputPath The path to normalize.
+     * @returns The normalized path.
+     */
+    normalizePath(inputPath: string): string {
+        console.log(`[PathUtils] Normalizing path: ${inputPath}`);
+        return path.normalize(inputPath);
+    }
 }
 
 // --- Example Usage ---
-async function demonstratePathUtils() {
+function demonstratePathUtils() {
     console.log('--- Demonstrating Path Utilities ---');
+    const pathUtils = new PathUtils();
 
-    const currentFile = '/Users/user/project/src/analysis/CodeAnalyzer.ts';
-    const relativeImport = '../utils';
-    const absoluteImport = 'react'; // Example of an absolute or module import
+    const currentDir = '/users/me/project/src';
+    const relativeFilePath = '../components/Button.tsx';
+    const absolutePath = '/users/me/project/src/components/Button.tsx';
+    const pathWithSegments = '/users/me/project/./src/../components//Button.tsx';
 
-    // Resolve relative path
-    const resolvedRelative = resolveModulePath(currentFile, relativeImport);
-    console.log('Resolved Relative Path:', resolvedRelative);
+    // Resolve path
+    const resolved = pathUtils.resolvePath(currentDir, relativeFilePath);
+    console.log('Resolved Path:', resolved); // Expected: /users/me/project/components/Button.tsx
 
-    // Normalize path (e.g., if path came from Windows)
-    const windowsPath = 'C:\Users\user\project\src\index.ts';
-    const normalized = normalizePath(windowsPath);
-    console.log('Normalized Path:', normalized);
+    // Directory name
+    const dirName = pathUtils.getDirectoryName(absolutePath);
+    console.log('Directory Name:', dirName); // Expected: /users/me/project/src/components
 
-    // Get directory name
-    const dir = getDirectoryName(currentFile);
-    console.log('Directory Name:', dir);
+    // Base name
+    const baseName = pathUtils.getBaseName(absolutePath);
+    console.log('Base Name:', baseName); // Expected: Button.tsx
 
-    // Get file extension
-    const ext = getFileExtension(currentFile);
-    console.log('File Extension:', ext);
+    // Extension
+    const ext = pathUtils.getExtension(absolutePath);
+    console.log('Extension:', ext); // Expected: .tsx
 
-    // Example with absolute path resolution (might need actual file system context)
-    // For demonstration, we'll just use path.resolve directly
-    const resolvedAbsolute = path.resolve('/Users/user/project', absoluteImport);
-    console.log(`Resolved absolute path for '${absoluteImport}' against root: '${resolvedAbsolute}'`);
+    // Normalize path
+    const normalized = pathUtils.normalizePath(pathWithSegments);
+    console.log('Normalized Path:', normalized); // Expected: /users/me/project/components/Button.tsx
 }
 
-// Running the example usage
-// Note: path module is a Node.js built-in. For browser env, path-browserify or similar would be needed.
-// The console logs demonstrate the functionality.
 demonstratePathUtils();

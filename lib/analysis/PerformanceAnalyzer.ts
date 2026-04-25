@@ -80,8 +80,7 @@ async function demonstratePerformanceAnalyzer() {
 
     const performanceResults = await analyzer.analyzeProject(filesToAnalyze);
 
-    console.log('
---- Performance Analysis Summary ---');
+    console.log('\n--- Performance Analysis Summary ---');
     if (performanceResults.length === 0) {
         console.log('No performance metrics recorded.');
     } else {

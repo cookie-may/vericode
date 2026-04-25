@@ -46,8 +46,7 @@ async function demonstrateJsonReporter() {
     };
 
     const formattedReport = reporter.format(reportData);
-    console.log('
---- Generated JSON Report ---');
+    console.log('\n--- Generated JSON Report ---');
     console.log(formattedReport);
 }
 

@@ -88,8 +88,7 @@ async function demonstrateCodeStyleAnalyzer() {
 
     const styleResults = await analyzer.analyzeProject(filesToAnalyze);
 
-    console.log('
---- Code Style Analysis Summary ---');
+    console.log('\n--- Code Style Analysis Summary ---');
     if (styleResults.length === 0) {
         console.log('No style issues found.');
     } else {
