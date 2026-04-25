@@ -10,7 +10,10 @@
       "Bash(node -e ' *)",
       "Bash(node fix-strings.js)",
       "Bash(sed -n '24,28p' lib/visualization/GraphNodeStyleMapper.ts)",
-      "Bash(sed -n '23,27p' lib/visualization/NodeStyleManager.ts)"
+      "Bash(sed -n '23,27p' lib/visualization/NodeStyleManager.ts)",
+      "Read(//c/Danann/1 Projects/1 Web Development/next JS/WP/2026/**)",
+      "Bash(pnpm lint *)",
+      "Bash(pnpm eslint *)"
     ]
   }
 }

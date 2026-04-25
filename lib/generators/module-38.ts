@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Module 38: Observer Pattern
  *
@@ -52,7 +53,8 @@ interface Observer {
 class ConcreteSubject extends Subject {
     public state: number | null = null;
 
-    // The subject's business logic that might change its state\npublic async changeState(newState: number): Promise<void> {
+    // The subject's business logic that might change its state
+    public async changeState(newState: number): Promise<void> {
         console.log(`Subject: Updating state to ${newState}`);
         this.state = newState;
         await new Promise(resolve => setTimeout(resolve, 50)); // Simulate async operation

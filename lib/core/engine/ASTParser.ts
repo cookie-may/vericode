@@ -12,7 +12,7 @@ export class ASTParser {
      * @param code The source code string to parse.
      * @returns A mock AST object.
      */
-    parse(code: string): any {
+    parse(code: string): unknown {
         // console.log('[ASTParser] Parsing code...');
         // Simulate parsing by returning a simple object representing the AST.
         // The 'body' property could represent the number of lines or key nodes.
@@ -29,7 +29,7 @@ export class ASTParser {
      * @param ast The AST object.
      * @returns The node count.
      */
-    getASTNodeCount(ast: any): number {
+    getASTNodeCount(ast: unknown): number {
         // console.log('[ASTParser] Getting AST node count...');
         // For this mock, we assume the 'body' property indicates node count.
         return ast?.body || 0;;
@@ -49,7 +49,7 @@ export interface User {
 }
 
 function greet(user: User): void {
-    console.log(`Hello, \${user.name}!`);
+    console.log("Hello, " + user.name + "!");
 }
 `;
 

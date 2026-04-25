@@ -10,7 +10,7 @@ interface AnalysisRule {
     id: string;
     name: string;
     description: string;
-    execute(context: any): Promise<any[]>; // Context could be file content, AST, etc.
+    execute(context: unknown): Promise<unknown[]>; // Context could be file content, AST, etc.
 }
 
 // Mock rule for complexity checks
@@ -19,8 +19,8 @@ class ComplexityRule implements AnalysisRule {
     name = 'Cyclomatic Complexity Check';
     description = 'Checks if cyclomatic complexity exceeds a threshold.';
 
-    async execute(context: { astSize: number; complexity: number }): Promise<any[]> {
-        const issues: any[] = [];
+    async execute(context: { astSize: number; complexity: number }): Promise<unknown[]> {
+        const issues: unknown[] = [];
         if (context.complexity > 10) { // Example threshold
             issues.push({
                 rule: thisThis.id,
@@ -38,8 +38,8 @@ class SecurityRule implements AnalysisRule {
     name = 'Basic Security Scan';
     description = 'Scans for common security vulnerabilities.';
 
-    async execute(context: { securityWarnings: string[] }): Promise<any[]> {
-        const issues: any[] = [];
+    async execute(context: { securityWarnings: string[] }): Promise<unknown[]> {
+        const issues: unknown[] = [];
         context.securityWarnings.forEach(warning => {
             issues.push({
                 rule: this.id,
@@ -72,9 +72,9 @@ export class RuleEngine {
      * @param context Data to be analyzed by the rules (e.g., file AST, content).
      * @returns A promise resolving to a list of all found issues.
      */
-    async runRules(context: any): Promise<any[]> {
+    async runRules(context: unknown): Promise<unknown[]> {
         console.log(`[RuleEngine] Running ${this.rules.size} registered rules...`);
-        const allIssues: any[] = [];
+        const allIssues: unknown[] = [];
 
         const ruleExecutionPromises = Array.from(this.rules.values()).map(async rule => {
             try {

@@ -5,7 +5,7 @@
  * It should visually represent key statistics like complexity, warnings, etc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { AggregatedReportData } from '../lib/reporting/ReportAggregator'; // Import aggregated data type
 
 interface MetricsDashboardProps {
@@ -13,29 +13,22 @@ interface MetricsDashboardProps {
 }
 
 const MetricsDashboard: React.FC<MetricsDashboardProps> = ({ data }) => {
-    const [metrics, setMetrics] = useState<AggregatedReportData>(data);
-
-    // Update state if the data prop changes (e.g., after a new analysis)
-    useEffect(() => {
-        setMetrics(data);
-    }, [data]);
-
     return (
         <div style={{ fontFamily: 'sans-serif', padding: '20px', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#f9f9f9', color: '#333' }}>
             <h2 style={{ marginTop: 0, marginBottom: '20px', color: '#0056b3', borderBottom: '2px solid #0056b3', paddingBottom: '10px' }}>Analysis Metrics Summary</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-                <MetricCard title="Total Files Analyzed" value={metrics.totalFiles} />
-                <MetricCard title="Files with Issues" value={metrics.filesWithWarnings} color="#FF9800" />
-                <MetricCard title="Total Complexity Score" value={metrics.totalComplexity} />
-                <MetricCard title="Total Security Warnings" value={metrics.totalSecurityWarnings} color="#f44336" />
-                <MetricCard title="Avg AST Nodes" value={metrics.averageAstSize} unit="nodes" />
+                <MetricCard title="Total Files Analyzed" value={data.totalFiles} />
+                <MetricCard title="Files with Issues" value={data.filesWithWarnings} color="#FF9800" />
+                <MetricCard title="Total Complexity Score" value={data.totalComplexity} />
+                <MetricCard title="Total Security Warnings" value={data.totalSecurityWarnings} color="#f44336" />
+                <MetricCard title="Avg AST Nodes" value={data.averageAstSize} unit="nodes" />
             </div>
 
-            {metrics.filesWithIssues.length > 0 && (
+            {data.filesWithIssues.length > 0 && (
                 <>
                     <h3 style={{ marginTop: '30px', marginBottom: '10px', color: '#007bff' }}>Files with Issues:</h3>
                     <div style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid #eee', padding: '15px', borderRadius: '4px', backgroundColor: '#fff' }}>
-                        {metrics.filesWithIssues.map((issue, index) => (
+                        {data.filesWithIssues.map((issue, index) => (
                             <div key={index} style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px dashed #eee' }}>
                                 <p style={{ margin: 0, fontWeight: 'bold', fontSize: '1.1em', color: '#dc3545' }}>{issue.filePath}</p>
                                 <p style={{ margin: '5px 0', fontSize: '0.9em', color: '#555' }}>{issue.warnings.length} warning(s):</p>
@@ -49,7 +42,7 @@ const MetricsDashboard: React.FC<MetricsDashboardProps> = ({ data }) => {
                     </div>
                 </>
             )}
-             {!metrics.filesWithIssues || metrics.filesWithIssues.length === 0 && (
+             {!data.filesWithIssues || data.filesWithIssues.length === 0 && (
                 <p>No specific file issues to display.</p>
              )}
         </div>

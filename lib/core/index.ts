@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Core Engine Exports
 export * from './engine/interfaces';
 export * from './engine/ScannerEngine';

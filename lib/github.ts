@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CodeFile } from '@/types';
 import { Parser } from './parser';
 

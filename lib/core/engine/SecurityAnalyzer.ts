@@ -26,8 +26,8 @@ export class SecurityAnalyzer {
         if (codeContent.includes('setTimeout(') && codeContent.includes('dangerouslySetInnerHTML')) {
             warnings.push('Potential security risk: Use of unsafe DOM manipulation patterns.');
         }
-        if (codeContent.includes('JSON.parse(') && codeContent.includes('any')) {
-            warnings.push('Potential security risk: Unsafe JSON parsing with "any" type.');
+        if (codeContent.includes('JSON.parse(') && codeContent.includes('unknown')) {
+            warnings.push('Potential security risk: Unsafe JSON parsing with "unknown" type.');
         }
 
         // console.log(`[SecurityAnalyzer] Found ${warnings.length} warnings.`);

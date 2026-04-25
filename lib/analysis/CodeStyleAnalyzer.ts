@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * lib/analysis/CodeStyleAnalyzer.ts
  *

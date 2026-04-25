@@ -1,6 +1,6 @@
 export class Container {
-  private services = new Map<string, any>();
-  private factories = new Map<string, (container: Container) => any>();
+  private services = new Map<string, unknown>();
+  private factories = new Map<string, (container: Container) => unknown>();
 
   public register<T>(identifier: string, instance: T): void {
     this.services.set(identifier, instance);

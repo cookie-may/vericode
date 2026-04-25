@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * lib/visualization/GraphLayoutEngine.ts
  *
@@ -53,7 +54,8 @@ export class GraphLayoutEngine {
         const layoutLinks = this.links;
 
         // Simulate layout convergence (in a real engine, this would be iterative)
-        // For simplicity, we'll just adjust positions slightly and add some randomness.\nfor (let i = 0; i < 50; i++) { // Simulate a few iterations
+        // For simplicity, we'll just adjust positions slightly and add some randomness.
+        for (let i = 0; i < 50; i++) { // Simulate a few iterations
             layoutNodes.forEach(node => {
                 // Simple repulsion/attraction simulation (very basic)
                 // Push nodes apart

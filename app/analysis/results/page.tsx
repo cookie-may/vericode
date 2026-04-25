@@ -11,7 +11,6 @@
 import React, { useEffect, useState } from 'react';
 import CodeStructureView from '@/components/CodeStructureView'; // Adjust path as necessary
 import { AnalysisResult } from '@/lib/analysis/CodeAnalyzer';
-import { CodeAnalyzer } from '@/lib/analysis/CodeAnalyzer';
 
 // Mock function to simulate fetching analysis results
 // In a real app, this would involve API calls or reading from a file/store
@@ -48,7 +47,7 @@ const AnalysisResultsPage: React.FC = () => {
                 const results = await fetchAnalysisResults();
                 setAnalysisData(results);
                 setError(null);
-            } catch (err: any) {
+            } catch (err) {
                 console.error("Failed to load analysis results:", err);
                 setError("Failed to load analysis results. Please try again later.");
             } finally {

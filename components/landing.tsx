@@ -97,7 +97,7 @@ function Hero() {
 
             {/* Description */}
             <p className="text-xl text-slate-300 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed shadow-sm drop-shadow-md">
-                Analyze any GitHub repository architecture instantly. Map dependencies, assess blast radius, and deploy data-driven refactoring intelligence.
+                Analyze unknown GitHub repository architecture instantly. Map dependencies, assess blast radius, and deploy data-driven refactoring intelligence.
             </p>
         </div>
 

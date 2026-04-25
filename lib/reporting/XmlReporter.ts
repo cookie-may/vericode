@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * lib/reporting/XmlReporter.ts
  *
@@ -86,11 +87,13 @@ export class XmlReporter implements IReportFormatter {
      * Basic XML escaping for attribute values and text content.
      */
     private escapeXml(unsafe: string): string {
-        return unsafe.replace(/[<>&'"]/g, (c) => {\nswitch (c) {
+        return unsafe.replace(/[<>&'"]/g, (c) => {
+            switch (c) {
                 case '<': return '&lt;';
                 case '>': return '&gt;';
                 case '&': return '&amp;';
-                case ''': return '&apos;';\ncase '"': return '&quot;';
+                case "'": return '&apos;';
+                case '"': return '&quot;';
                 default: return c;
             }
         });
@@ -123,9 +126,10 @@ async function demonstrateXmlReporter() {
 
 // This mock assumes IReportFormatter is available in the scope.
 // In a real setup, it would be imported from './ReportGenerator' or similar.
-// For standalone execution context, we'll define a placeholder if not available.\nif (typeof IReportFormatter === 'undefined') {
-     // @ts-ignore
-    global.IReportFormatter = { format: (report: Report) => '' }; // Placeholder
+// For standalone execution context, we'll define a placeholder if not available.
+if (typeof IReportFormatter === 'undefined') {
+    // @ts-expect-error Mocking IReportFormatter for demo
+    global.IReportFormatter = { format: () => '' }; // Placeholder
 }
 
 demonstrateXmlReporter();

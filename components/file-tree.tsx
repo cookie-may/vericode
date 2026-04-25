@@ -5,7 +5,7 @@ import { ChevronDown, ChevronRight, FileCode, Folder, FolderOpen } from 'lucide-
 import { CodeFile } from '@/types';
 
 interface FileTreeProps {
-  tree: any;
+  tree: unknown;
   files: CodeFile[];
   onSelect: (file: CodeFile) => void;
   selectedPath?: string;
@@ -16,7 +16,7 @@ interface FileTreeProps {
 function FolderNode({
   name, value, files, onSelect, selectedPath, level, path,
 }: {
-  name: string; value: any; files: CodeFile[];
+  name: string; value: unknown; files: CodeFile[];
   onSelect: (f: CodeFile) => void; selectedPath?: string;
   level: number; path: string;
 }) {
@@ -33,7 +33,7 @@ function FolderNode({
         <span className="text-[11px] font-bold text-slate-400 group-hover:text-slate-200 uppercase tracking-tighter transition-colors">
           {name}
         </span>
-        <span className="ml-auto text-[9px] text-slate-600 font-mono">{value._count}</span>
+        <span className="ml-auto text-[9px] text-slate-600 font-mono">{String((value as Record<string, unknown>)._count)}</span>
       </div>
       {open && (
         <FileTreeEntries
@@ -46,11 +46,11 @@ function FolderNode({
 }
 
 function FileTreeEntries({ tree, files, onSelect, selectedPath, level = 0, path = '' }: FileTreeProps) {
-  const entries = Object.entries(tree).filter(([key]) => key !== '_count');
+  const entries = Object.entries(tree as Record<string, unknown>).filter(([key]) => key !== '_count');
 
   return (
     <div>
-      {entries.map(([key, value]: [string, any]) => {
+      {entries.map(([key, value]: [string, unknown]) => {
         const currentPath = path ? `${path}/${key}` : key;
         const isFolder = typeof value === 'object' && value !== null && '_count' in value;
 

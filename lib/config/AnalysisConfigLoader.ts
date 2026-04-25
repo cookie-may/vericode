@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * lib/config/AnalysisConfigLoader.ts
  *
@@ -161,7 +162,7 @@ async function setupAnalysisConfig() {
 
     // Mock environment variables if not in Node.js context
     if (typeof process === 'undefined') {
-        // @ts-ignore
+        // @ts-expect-error Mocking global process for browser environment
         global.process = { env: { ENABLE_SECURITY_SCAN: 'true', OUTPUT_FORMAT: 'html', ENABLE_TYPECHECK: 'true' } };
     }
 

@@ -46,7 +46,7 @@ export class ScannerEngine {
      * @param filePaths An array of file paths to scan.
      * @returns A promise resolving to an object containing generated reports and graph data.
      */
-    async scanProject(filePaths: string[]): Promise<{ jsonReport: string; htmlReport: string; graphData: any }> {
+    async scanProject(filePaths: string[]): Promise<{ jsonReport: string; htmlReport: string; graphData: unknown }> {
         console.log(`[ScannerEngine] Starting scan for ${filePaths.length} files.`);
 
         // 1. Perform code analysis
@@ -58,7 +58,7 @@ export class ScannerEngine {
         // and then format it for the renderer.
         const projectGraphData = this.dependencyAnalyzer.buildDependencyGraph(filePaths);
         const graphNodes: GraphNode[] = [];
-        const graphLinks: any[] = []; // Using any for simplicity, define Link type later
+        const graphLinks: unknown[] = []; // Using unknown for simplicity, define Link type later
 
         // Populate nodes and links for the graph renderer
         const nodesMap = new Map<string, GraphNode>(); // Use map to avoid duplicate nodes
@@ -118,11 +118,9 @@ async function demonstrateScannerEngine() {
     const scanResults = await engine.scanProject(filesToScan);
 
     console.log('\n--- Scanner Engine Scan Complete ---');
-    console.log('JSON Report Snippet:\n', scanResults.jsonReport.substring(0, 400) + '
-...');\nconsole.log('
-HTML Report Snippet:
-', scanResults.htmlReport.substring(0, 500) + '
-...');\nconsole.log('
-Graph Layout Data (first node):', scanResults.graphData.nodes.length > 0 ? scanResults.graphData.nodes[0] : 'No nodes');\n}
+    console.log('JSON Report Snippet:\n', scanResults.jsonReport.substring(0, 400) + '...');
+    console.log('HTML Report Snippet:\n', scanResults.htmlReport.substring(0, 500) + '...');
+    console.log('Graph Layout Data (first node):', scanResults.graphData.nodes.length > 0 ? scanResults.graphData.nodes[0] : 'No nodes');
+}
 
 demonstrateScannerEngine();

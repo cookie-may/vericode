@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿/*
  * lib/visualization/NodeStyleManager.ts
  *

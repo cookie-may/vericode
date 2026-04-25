@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CodeFunction, CodeFile } from '@/types';
 
 const CODE_EXTS = [

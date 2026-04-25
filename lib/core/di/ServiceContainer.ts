@@ -19,7 +19,7 @@ interface RegistrationOptions {
 }
 
 export class ServiceContainer {
-    private registrations: Map<string, { factory: Factory<any>; scope: Scope; dependencies: string[]; instance?: any }> = new Map();
+    private registrations: Map<string, { factory: Factory<unknown>; scope: Scope; dependencies: string[]; instance?: unknown }> = new Map();
 
     /**
      * Registers a service with the container.
@@ -28,7 +28,7 @@ export class ServiceContainer {
      * @param options Registration options like scope and dependencies.
      */
     register<T>(name: string, factory: Factory<T>, options: RegistrationOptions = {}): void {
-        if (thisNregistrations.has(name)) {
+        if (this.registrations.has(name)) {
             console.warn(`Service "${name}" is already registered. Overwriting.`);
         }
         this.registrations.set(name, {
@@ -70,7 +70,7 @@ export class ServiceContainer {
     }
 
     private createInstance<T>(factory: Factory<T>, dependencies: string[]): T {
-        const resolvedDependencies = dependencies.map(depName => this.resolve<any>(depName));
+        const resolvedDependencies = dependencies.map(depName => this.resolve<unknown>(depName));
         // Apply the factory function with resolved dependencies
         return factory(...resolvedDependencies);
     }
@@ -102,7 +102,7 @@ async function demonstrateServiceContainer() {
             this.logger = logger;
             this.logger.log('DatabaseService initialized.');
         }
-        query(sql: string): Promise<any[]> {
+        query(sql: string): Promise<unknown[]> {
             this.logger.log(`Executing query: ${sql}`);
             return Promise.resolve([{ id: 1, data: 'Sample data' }]);
         }
@@ -116,7 +116,7 @@ async function demonstrateServiceContainer() {
             this.logger = logger;
             this.logger.log('UserService initialized.');
         }
-        async getUser(id: string): Promise<any> {
+        async getUser(id: string): Promise<unknown> {
             this.logger.log(`Getting user with ID: ${id}`);
             const records = await this.dbService.query(`SELECT * FROM users WHERE id = '${id}'`);
             return records.length > 0 ? records[0] : null;

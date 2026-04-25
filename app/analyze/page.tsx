@@ -10,12 +10,14 @@ import VizTree from '@/components/viz-tree';
 import VizFlow from '@/components/viz-flow';
 import VizCluster from '@/components/viz-cluster';
 import VizBundle from '@/components/viz-bundle';
+import MockCodeModal from '@/components/MockCodeModal';
+import { generateMockCodeExamples } from '@/lib/mockCodeGenerator';
 import {
   Zap, Settings, Search,
-  Activity, Shield, Layout, Terminal, BarChart3,
+  Activity, Shield, Layout, Terminal,
   AlertTriangle, Layers,
   Loader2, CheckCircle2, Globe,
-  GitBranch, Lightbulb, ChevronRight,
+  Lightbulb, ChevronRight,
 } from 'lucide-react';
 
 export default function AnalyzePage() {
@@ -30,7 +32,7 @@ export default function AnalyzePage() {
   const [rightPanel, setRightPanel] = useState<'issues' | 'pattern' | 'security' | 'actions'>('issues');
   const [drillDown, setDrillDown] = useState<{ type: 'duplicate'; data: import('@/types').Duplicate } | null>(null);
 
-  const handleSelectFile = useCallback((nodeOrFile: any) => {
+  const handleSelectFile = useCallback((nodeOrFile: { path?: string; id?: string }) => {
     if (!result) return;
     const path = nodeOrFile.path ?? nodeOrFile.id;
     if (!path) return;
@@ -288,7 +290,7 @@ export default function AnalyzePage() {
                 {/* ── ISSUES TAB ── */}
                 {rightPanel === 'issues' && (
                   selectedFile ? (
-                    <FileDetailView file={selectedFile} result={result} />
+                    <FileDetailView file={selectedFile} />
                   ) : (
                     <IssuesListView result={result} />
                   )
@@ -364,7 +366,7 @@ function IssuesListView({ result }: { result: AnalysisResult }) {
   );
 }
 
-function FileDetailView({ file, result }: { file: CodeFile; result: AnalysisResult }) {
+function FileDetailView({ file }: { file: CodeFile }) {
   return (
     <>
       {/* File header */}
@@ -732,6 +734,12 @@ function DuplicateModal({
   onClose: () => void;
   onSelectFile: (path: string) => void;
 }) {
+  const [mockCodeModalOpen, setMockCodeModalOpen] = useState(false);
+  const [selectedFileForMock, setSelectedFileForMock] = useState<{
+    file: string;
+    name: string;
+  } | null>(null);
+
   const isCode = dup.type === 'code';
   const accentColor = isCode ? '#a78bfa' : '#ff9f43';
   const icon = isCode ? '📋' : '📛';
@@ -795,7 +803,6 @@ function DuplicateModal({
             <div className="space-y-0 rounded-xl overflow-hidden border border-white/5">
               {dup.files.map((f, i) => {
                 const fnName = f.name || dup.name;
-                const fileName = f.file.split('/').pop() ?? f.file;
                 return (
                   <div
                     key={i}
@@ -826,7 +833,10 @@ function DuplicateModal({
 
                     {/* Right: View button */}
                     <button
-                      onClick={() => onSelectFile(f.file)}
+                      onClick={() => {
+                        setSelectedFileForMock({ file: f.file, name: fnName });
+                        setMockCodeModalOpen(true);
+                      }}
                       className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-bold bg-white/5 border border-white/10 text-slate-400 hover:bg-brand-orange/20 hover:border-brand-orange/40 hover:text-brand-orange transition-all"
                     >
                       👁️ View
@@ -847,6 +857,22 @@ function DuplicateModal({
             </div>
           </div>
         </div>
+
+        {/* Mock Code Modal */}
+        {mockCodeModalOpen && selectedFileForMock && (
+          <MockCodeModal
+            examples={generateMockCodeExamples(
+              selectedFileForMock.name,
+              selectedFileForMock.file
+            )}
+            functionName={selectedFileForMock.name}
+            filePath={selectedFileForMock.file}
+            onClose={() => {
+              setMockCodeModalOpen(false);
+              setSelectedFileForMock(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );

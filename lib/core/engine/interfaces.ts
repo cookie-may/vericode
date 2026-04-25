@@ -3,7 +3,7 @@ export interface IASTNode {
   start: number;
   end: number;
   children?: IASTNode[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface IFileContext {

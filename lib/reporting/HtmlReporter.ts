@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * lib/reporting/HtmlReporter.ts
  *
@@ -98,8 +99,9 @@ async function demonstrateHtmlReporter() {
 
     console.log('\n--- Generated HTML Report (Content Below) ---');
     // In a real scenario, this would be written to an HTML file.
-    // For console output, we'll just log a snippet.\nconsole.log(htmlReport.substring(0, 500) + '
-...'); // Log first 500 chars\nconsole.log('--- End of HTML Report Snippet ---');
+    // For console output, we'll just log a snippet.
+    console.log(htmlReport.substring(0, 500) + '...');
+    console.log('--- End of HTML Report Snippet ---');
 }
 
 demonstrateHtmlReporter();

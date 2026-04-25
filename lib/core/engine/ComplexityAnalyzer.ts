@@ -11,7 +11,7 @@ export class ComplexityAnalyzer {
      * @param ast The AST object representing the code structure.
      * @returns A numerical complexity score.
      */
-    calculateCyclomaticComplexity(ast: any): number {
+    calculateCyclomaticComplexity(ast: unknown): number {
         // console.log('[ComplexityAnalyzer] Calculating complexity...');
         // Simple mock: complexity is roughly proportional to AST node count, with some variance.
         const baseComplexity = ast?.body || 0;

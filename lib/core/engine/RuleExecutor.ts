@@ -10,7 +10,7 @@ import { AnalysisRule } from './RuleEngine'; // Assuming AnalysisRule is defined
 // Placeholder for a rule context, which could contain AST, file content, etc.
 type AnalysisContext = {
     filePath: string;
-    ast?: any;
+    ast?: unknown;
     codeContent?: string;
     dependencies?: string[];
     complexity?: number;
@@ -38,9 +38,9 @@ export class RuleExecutor {
      * @param context The context to analyze.
      * @returns A promise resolving to a list of all findings from the executed rules.
      */
-    async executeAll(context: AnalysisContext): Promise<any[]> {
+    async executeAll(context: AnalysisContext): Promise<unknown[]> {
         console.log(`[RuleExecutor] Executing ${this.rules.size} rules for file: ${context.filePath}`);
-        const allFindings: any[] = [];
+        const allFindings: unknown[] = [];
 
         const ruleExecutionPromises = Array.from(this.rules.values()).map(async rule => {
             try {

@@ -16,7 +16,7 @@ interface CodeStructureViewProps {
 
 const CodeStructureView: React.FC<CodeStructureViewProps> = ({ analysisResults }) => {
     const [nodes, setNodes] = React.useState<GraphNode[]>([]);
-    const [links, setLinks] = React.useState<any[]>([]); // Using 'any' for simplicity, could define Link type
+    const [links, setLinks] = React.useState<unknown[]>([]); // Using 'unknown' for simplicity, could define Link type
     const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
@@ -34,7 +34,7 @@ const CodeStructureView: React.FC<CodeStructureViewProps> = ({ analysisResults }
             // Mocking data preparation for demonstration purposes
             const nodeFactory = new GraphNodeFactory();
             const tempNodes: GraphNode[] = [];
-            const tempLinks: any[] = [];
+            const tempLinks: unknown[] = [];
             const nodeMap = new Map<string, GraphNode>();
 
             analysisResults.forEach(result => {
@@ -148,14 +148,14 @@ async function demonstrateCodeStructureView() {
     // but we can simulate the data preparation part.
     const renderer = new CodeGraphRenderer(); // Assuming this is imported/available
     renderer.prepareGraphData(mockAnalysisResults);
-    const graphData = (renderer as any).graphData; // Accessing private member for demo
+    const graphData = (renderer as unknown as Record<string, unknown>).graphData; // Accessing private member for demo
 
     if (graphData) {
         const componentProps: CodeStructureViewProps = { analysisResults: mockAnalysisResults };
         // Simulate the component's internal logic for data preparation
         const nodeFactory = new GraphNodeFactory();
         const tempNodes: GraphNode[] = [];
-        const tempLinks: any[] = [];
+        const tempLinks: unknown[] = [];
         const nodeMap = new Map<string, GraphNode>();
 
         mockAnalysisResults.forEach(result => {
