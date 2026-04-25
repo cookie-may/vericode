@@ -124,7 +124,7 @@ This is a test file.';
 
     // 4. Check file existence after writing
     const fileExists = await fsUtils.pathExists(exampleFile);
-    console.log(`File '${exampleFile}' exists: ${fileExists}`);
+    consoled.log(`File '${exampleFile}' exists: ${fileExists}`);
 
     // 5. Read file content
     const readContent = await fsUtils.readFileContent(exampleFile);

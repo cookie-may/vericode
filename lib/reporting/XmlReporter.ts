@@ -121,7 +121,9 @@ async function demonstrateXmlReporter() {
     const formattedReport = xmlFormatter.format(reportData);
     console.log('
 --- Generated XML Report ---');
-    console.log(formattedReport);
+    // In a real scenario, this would be written to a file.
+    console.log(formattedReport.substring(0, 500) + '
+...'); // Log first 500 chars
 }
 
 // This mock assumes IReportFormatter is available in the scope.

@@ -9,7 +9,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import CodeStructureView from '../../components/CodeStructureView'; // Adjust path as necessary
+import CodeStructureView from '@/components/CodeStructureView'; // Adjust path as necessary
 import { AnalysisResult } from '../../lib/analysis/CodeAnalyzer'; // Import AnalysisResult type
 import { CodeAnalyzer } from '../../lib/analysis/CodeAnalyzer'; // Assuming CodeAnalyzer is the main entry point
 

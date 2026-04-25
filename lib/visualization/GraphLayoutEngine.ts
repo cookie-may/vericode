@@ -14,7 +14,7 @@ interface GraphLink {
 }
 
 // Represents the computed layout positions for nodes and links
-export interface GraphLayout {
+interface GraphLayout {
     nodes: Array<GraphNode & { x: number; y: number; fx?: number; fy?: number }>;
     links: Array<GraphLink & { /* layout-specific properties like curvature */ }>;
 }
