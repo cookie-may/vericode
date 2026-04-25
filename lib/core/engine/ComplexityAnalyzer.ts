@@ -1,51 +1,39 @@
-import { IAnalysisResult, IAnalyzer, IFileContext } from './interfaces';
+/*
+ * lib/core/engine/ComplexityAnalyzer.ts
+ *
+ * Mock implementation for analyzing code complexity (e.g., cyclomatic complexity).
+ * In a real implementation, this would analyze the AST.
+ */
 
-export class ComplexityAnalyzer implements IAnalyzer {
-  private readonly threshold: number;
-
-  constructor(cyclomaticThreshold: number = 10) {
-    this.threshold = cyclomaticThreshold;
-  }
-
-  public getName(): string {
-    return 'CyclomaticComplexityAnalyzer';
-  }
-
-  public getSupportedLanguages(): string[] {
-    return ['typescript', 'javascript', 'python', 'java', 'go', 'csharp'];
-  }
-
-  public async analyze(context: IFileContext): Promise<IAnalysisResult[]> {
-    const results: IAnalysisResult[] = [];
-    
-    if (!context.ast) {
-      return results;
+export class ComplexityAnalyzer {
+    /**
+     * Calculates a mock cyclomatic complexity score for a given AST.
+     * @param ast The AST object representing the code structure.
+     * @returns A numerical complexity score.
+     */
+    calculateCyclomaticComplexity(ast: any): number {
+        // console.log('[ComplexityAnalyzer] Calculating complexity...');
+        // Simple mock: complexity is roughly proportional to AST node count, with some variance.
+        const baseComplexity = ast?.body || 0;
+        // Add some randomness to simulate different complexity factors
+        const randomFactor = Math.random() * 5;
+        return Math.max(1, Math.round(baseComplexity / 15 + randomFactor)); // Ensure minimum complexity of 1
     }
-
-    // Traverse the AST to compute cyclomatic complexity
-    // This is a placeholder demonstrating the Open/Closed Principle
-    const complexity = this.calculateComplexity(context.ast);
-    
-    if (complexity > this.threshold) {
-      results.push({
-        ruleId: 'complexity-too-high',
-        severity: 'warning',
-        message: `Cyclomatic complexity is ${complexity}, which exceeds the threshold of ${this.threshold}. Consider refactoring.`,
-        line: 1 // Extracted from AST node in real logic
-      });
-    }
-
-    return results;
-  }
-
-  private calculateComplexity(ast: any): number {
-    // Simulated complexity calculation based on pseudo-AST nodes
-    let complexity = 1; // Base complexity
-    
-    // Simulate finding branching statements
-    const textRepresentation = JSON.stringify(ast);
-    const branches = (textRepresentation.match(/IfStatement|ForStatement|WhileStatement|SwitchCase|CatchClause/g) || []).length;
-    
-    return complexity + branches;
-  }
 }
+
+// --- Example Usage ---
+function demonstrateComplexityAnalyzer() {
+    console.log('--- Demonstrating Complexity Analyzer ---');
+    const analyzer = new ComplexityAnalyzer();
+
+    // Mock AST objects with different node counts
+    const ast1 = { type: 'Program', body: 30 }; // Represents code with ~30 nodes/lines
+    const ast2 = { type: 'Program', body: 100 }; // Represents more complex code
+    const ast3 = { type: 'Program', body: 10 }; // Represents simpler code
+
+    console.log('Complexity for AST 1 (body=30):', analyzer.calculateCyclomaticComplexity(ast1));
+    console.log('Complexity for AST 2 (body=100):', analyzer.calculateCyclomaticComplexity(ast2));
+    console.log('Complexity for AST 3 (body=10):', analyzer.calculateCyclomaticComplexity(ast3));
+}
+
+demonstrateComplexityAnalyzer();

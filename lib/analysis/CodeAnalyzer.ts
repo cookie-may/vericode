@@ -9,7 +9,7 @@
 import { ASTParser } from '../core/engine/ASTParser'; // Assuming ASTParser is available
 import { ComplexityAnalyzer } from '../core/engine/ComplexityAnalyzer'; // Assuming ComplexityAnalyzer is available
 import { SecurityAnalyzer } from '../core/engine/SecurityAnalyzer'; // Assuming SecurityAnalyzer is available
-import { DependencyAnalyzer } from './DependencyAnalyzer'; // New module
+import { DependencyAnalyzer } from './DependencyCalculator'; // New module
 
 export interface AnalysisResult {
     filePath: string;
@@ -125,13 +125,16 @@ class MockASTParser {
 ').filter(line => line.trim() !== '').length };
     }
     getASTNodeCount(ast: any): number {
-        return ast.body || 0;
+        // console.log('[MockASTParser] Getting AST node count...');
+        return ast?.body || 0;
     }
 }
 class MockComplexityAnalyzer {
     calculateCyclomaticComplexity(ast: any): number {
         // console.log('[MockComplexityAnalyzer] Calculating complexity...');
-        return Math.floor(Math.random() * 10) + 1; // Random complexity between 1 and 10
+        const baseComplexity = ast?.body || 0;
+        const randomFactor = Math.random() * 5;
+        return Math.max(1, Math.round(baseComplexity / 15 + randomFactor));
     }
 }
 class MockSecurityAnalyzer {
@@ -139,10 +142,16 @@ class MockSecurityAnalyzer {
         // console.log('[MockSecurityAnalyzer] Scanning for vulnerabilities...');
         const warnings: string[] = [];
         if (content.includes('eval(') || content.includes('new Function(')) {
-            warnings.push('Potential security risk: Dynamic code execution found.');
+            warnings.push('Potential security risk: Dynamic code execution detected.');
         }
-        if (content.includes('process.env.SECRET')) {
+        if (content.includes('process.env.SECRET_KEY') || content.includes('process.env.API_KEY')) {
             warnings.push('Potential security risk: Sensitive environment variable access.');
+        }
+        if (content.includes('setTimeout(') && content.includes('dangerouslySetInnerHTML')) {
+            warnings.push('Potential security risk: Use of unsafe DOM manipulation patterns.');
+        }
+        if (content.includes('JSON.parse(') && content.includes('any')) {
+            warnings.push('Potential security risk: Unsafe JSON parsing with "any" type.');
         }
         return warnings;
     }
@@ -157,7 +166,7 @@ CodeAnalyzer.prototype.complexityAnalyzer = new MockComplexityAnalyzer();
 // @ts-ignore
 CodeAnalyzer.prototype.securityAnalyzer = new MockSecurityAnalyzer();
 // @ts-ignore
-CodeAnalyzer.prototype.dependencyAnalyzer = new DependencyAnalyzer(); // Assuming DependencyAnalyzer is defined elsewhere or mocked
+CodeAnalyzer.prototype.dependencyAnalyzer = new DependencyAnalyzer();
 
 // --- Example Usage ---
 async function demonstrateCodeAnalyzer() {
