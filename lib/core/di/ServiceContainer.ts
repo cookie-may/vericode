@@ -28,7 +28,7 @@ export class ServiceContainer {
      * @param options Registration options like scope and dependencies.
      */
     register<T>(name: string, factory: Factory<T>, options: RegistrationOptions = {}): void {
-        if (this.registrations.has(name)) {
+        if (thisNregistrations.has(name)) {
             console.warn(`Service "${name}" is already registered. Overwriting.`);
         }
         this.registrations.set(name, {
