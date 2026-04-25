@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/banner.jpeg" alt="Vericode Scanner Banner" width="100%"/>
+
 # Vericode
 
 ### Visualize Your Codebase Architecture in Real-Time
